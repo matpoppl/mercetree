@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="phpunit" default="build" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
+    <target name="phpunit" unless="phpunit.done" description="Run phpunit">
+        <exec executable="${basedir}/tools/phpunit.cmd" failonerror="true" taskname="phpunit">
+            <arg value="--coverage-text"/>
+        </exec>
+
+        <property name="phpunit.done" value="true"/>
+    </target>
+
+    <target name="phpstan" unless="phpstan.done" description="Run phpstan">
+        <exec executable="${basedir}/tools/phpstan.cmd" failonerror="true" taskname="phpstan">
+        </exec>
+
+        <property name="phpstan.done" value="true"/>
+    </target>
+
+    <target name="php-cs-fixer" unless="php-cs-fixer.done" description="Run php-cs-fixer">
+        <exec executable="${basedir}/tools/php-cs-fixer.cmd" failonerror="true" taskname="php-cs-fixer">
+        </exec>
+
+        <property name="php-cs-fixer.done" value="true"/>
+    </target>
+
+    <target name="validate-composer-json" unless="validate-composer-json.done" description="Validate composer.json">
+        <exec executable="${basedir}/tools/composer.cmd" failonerror="true" taskname="composer">
+            <arg value="validate"/>
+            <arg value="--strict"/>
+            <arg value="${basedir}/composer.json"/>
+        </exec>
+
+        <property name="validate-composer-json.done" value="true"/>
+    </target>
+
+    <target name="php-link" unless="php-link.done" description="Perform syntax check on PHP files">
+        <apply executable="php.exe" failonerror="true" taskname="lint">
+            <arg value="-l"/>
+
+            <fileset dir="${basedir}/src">
+                <include name="**/*.php"/>
+                <modified/>
+            </fileset>
+
+            <fileset dir="${basedir}/tests">
+                <include name="**/*.php"/>
+                <modified/>
+            </fileset>
+        </apply>
+
+        <property name="php-link.done" value="true"/>
+    </target>
+
+    <target name="build" depends="validate-composer-json,php-cs-fixer,phpstan,phpunit" description="Build package">
+    </target>
+
+</project>

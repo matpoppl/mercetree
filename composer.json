@@ -1,0 +1,30 @@
+{
+    "name": "mateusz/mercetree",
+    "type": "project",
+    "description": "Zadanie rekrutacyjne dla php developera",
+	"license": "MIT",
+    "authors": [
+        {
+            "name": "Mateusz Popielarz",
+            "email": "mateusz.popielarz@gmail.com"
+        }
+	],
+    "autoload": {
+        "psr-4": {
+            "Mateusz\\Mercetree\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mateusz\\Mercetree\\": "tests/src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": "8.1.*",
+        "ext-mbstring": "*",
+        "psr/simple-cache": "^3.0",
+        "psr/log": "^3.0",
+        "laminas/laminas-servicemanager": "^3.22"
+	}
+}
