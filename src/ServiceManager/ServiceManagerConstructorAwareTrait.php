@@ -6,7 +6,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 
 trait ServiceManagerConstructorAwareTrait
 {
-    public function __construct(private ServiceLocatorInterface $serviceManager, private ?array $options = null)
+    public function __construct(private readonly ServiceLocatorInterface $serviceManager, private readonly ?array $options = null)
     {
     }
 }

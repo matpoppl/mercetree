@@ -5,10 +5,10 @@ namespace Mateusz\Mercetree\Application\Component;
 interface ComponentManagerInterface
 {
     /**
-     * 
+     *
      * @template T of object
-     * @param class-string<T> $name
-     * @throws NotFoundException
+     * @param class-string<T> $id
+     * @throws NotFoundExceptionInterface
      * @return object
      * @psalm-return T
      */

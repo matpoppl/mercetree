@@ -1,0 +1,17 @@
+<?php
+
+/** @var Mateusz\Mercetree\View\Data\ViewDataInterface $view */
+/** @var Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary\Presentation\ProductInterface $product */
+/** @var Mateusz\Mercetree\Shop\ShopComponentInterface $shop */
+
+$product = $view->get('product');
+$shop = $view->get('shop');
+
+$currencyFormatter = $shop->getNumberFormatter();
+
+?>
+
+<b><?= $product->getName() ?> <small>(x<?= $product->getQuantity() ?>)</small></b><br />
+<?= $currencyFormatter->formatCurrency($product->getPriceNet(), $product->getCurrencySymbol()) ?> NET
+<?= $currencyFormatter->formatCurrency($product->getPriceGross(), $product->getCurrencySymbol()) ?> GROSS
+<small>(<?= $product->getTaxRate() ?>% / <?= $currencyFormatter->formatCurrency($product->getTaxValue(), $product->getCurrencySymbol()) ?>)</small>

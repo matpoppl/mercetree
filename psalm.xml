@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="7"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="true"
+>
+    <projectFiles>
+        <directory name="configs" />
+        <directory name="src" />
+        <directory name="public" />
+        <directory name="views" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+
+
+    </projectFiles>
+
+    <issueHandlers>
+        <UnusedMethod>
+            <errorLevel type="suppress">
+                <directory name="src" />
+            </errorLevel>
+        </UnusedMethod>
+
+        <UnusedParam>
+            <errorLevel type="suppress">
+                <file name="src/TreeConfigurator/Data/Dbal/Adapter/ArrayDataset/Constraint/PhpConfigFileLoader.php" />
+                <file name="src/View/Renderer/PhtmlRenderer.php" />
+            </errorLevel>
+        </UnusedParam>
+
+        <PossiblyUnusedReturnValue>
+            <errorLevel type="suppress">
+                <directory name="src/TreeConfigurator/Builder" />
+            </errorLevel>
+        </PossiblyUnusedReturnValue>
+
+        <UndefinedGlobalVariable>
+            <errorLevel type="suppress">
+                <directory name="configs/dataset" />
+            </errorLevel>
+        </UndefinedGlobalVariable>
+    </issueHandlers>
+</psalm>

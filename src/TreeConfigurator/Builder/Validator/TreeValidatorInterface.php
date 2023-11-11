@@ -1,0 +1,12 @@
+<?php
+
+namespace Mateusz\Mercetree\TreeConfigurator\Builder\Validator;
+
+use Mateusz\Mercetree\ProductConfigurator\Constraint\ValidationContextInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTree;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeInterface;
+
+interface TreeValidatorInterface
+{
+    public function validate(BuiltTreeInterface $tree) : TreeValidatorResultInterface;
+}

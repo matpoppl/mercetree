@@ -3,32 +3,56 @@
 namespace Mateusz\Mercetree;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Mateusz\Mercetree\ServiceManager\ServiceManagerFileFactory;
 use Mateusz\Mercetree\Application\Component\ComponentManagerInterface;
+use Mateusz\Mercetree\ServiceManager\Factory\FileFactory;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ */
 class Application
 {
-    public function __construct(private ServiceLocatorInterface $serviceManager)
+    public function __construct(private readonly ServiceLocatorInterface $serviceManager)
     {}
-    
+
+    /**
+     *
+     * @template T of object
+     * @param string|class-string<T> $id
+     * @return mixed|object<T>
+     * @psalm-suppress PossiblyUnusedMethod
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function getService(string $id) : mixed
     {
         return $this->serviceManager->get($id);
     }
-    
+
     /**
-     * @template T
+     * @template T of object
      * @param class-string<T> $id
-     * @return object T
+     * @return object<T>
+     * @psalm-suppress PossiblyUnusedMethod
+     * @throws Application\Component\NotFoundExceptionInterface
      */
     public function getComponent(string $id) : object
     {
-        return $this->getService(ComponentManagerInterface::class)->get($id);
+        try {
+            return $this->getService(ComponentManagerInterface::class)->get($id);
+        } catch(NotFoundExceptionInterface | ContainerExceptionInterface $ex) {
+            throw new \UnexpectedValueException("ComponentManager service retrievable error", 0 , $ex);
+        }
     }
-    
+
+    /**
+     * @param array<array-key, mixed> $config
+     * @return self
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function create(array $config) : self
     {
-        $sm = ServiceManagerFileFactory::createFromOptions($config);
+        $sm = FileFactory::createFromOptions($config);
         return new self($sm);
     }
 }

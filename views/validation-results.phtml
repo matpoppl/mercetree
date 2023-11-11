@@ -1,0 +1,46 @@
+<?php
+
+/** @var \Mateusz\Mercetree\View\Data\ViewDataInterface $view */
+/** @var \Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorResultInterface $results */
+
+$results = $view->get('results');
+
+if (! $results) {
+    return;
+}
+
+$t = $view->getTranslator()->translateTemplated(...);
+
+
+
+?>
+
+<?php if($results->isValid()): ?>
+<div style="border:1em solid #0a0;padding:1em 2em;color:#0a0"><b>Validation success</b></div>
+<?php return; endif; ?>
+
+<div style="border:1em solid #a00;padding:1em 2em;color:#a00">
+<?php if($errors = $results->getTreeErrors()): ?>
+<h1>Tree Errors</h1>
+<ul>
+    <?php foreach($errors as $error): ?>
+    <li>
+        <?= $t($error->getMessageTemplate(), $error->getParameters()) ?>
+        <br /><small><?= $error->getConstraintType() ?></small>
+    </li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
+<?php foreach($results->getRowIds() as $rowId): if($rows = $results->getRowErrors($rowId)): ?>
+    <h2>Row `<?= $rowId ?>` Errors</h2>
+    <ul>
+        <?php foreach($rows as $error): ?>
+            <li>
+                <?= $t($error->getMessageTemplate(), $error->getParameters()) ?>
+                <br /><small><?= $error->getConstraintType() ?></small>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; endforeach; ?>
+</div>

@@ -1,27 +1,48 @@
 <?php
 
-use Mateusz\Mercetree\Shop\View\Preferences;
-use Mateusz\Mercetree\Shop\View\PreferencesInterface;
-use Mateusz\Mercetree\Shop\View\PreferencesFactory;
-use Mateusz\Mercetree\Shop\Currency\CurrencyCodeInterface;
-use Mateusz\Mercetree\Shop\Currency\CurrencyCode;
-use Mateusz\Mercetree\Shop\Currency\DefaultCurrencyCodeFactory;
+use Mateusz\Mercetree\Intl;
+use Mateusz\Mercetree\Shop\Tax;
+use Mateusz\Mercetree\Shop\View;
+use Mateusz\Mercetree\Shop\Currency;
+use Mateusz\Mercetree\Shop\Currency\Rate\Data;
 
 return [
 
-    CurrencyCode::class => [
+    Intl\NumberFormatter::class => [
+        'locale' => 'pl_PL',
+        'default_currency' => 'PLN',
+    ],
+
+    Tax\TaxCalculator::class => [
+        'precision' => 2,
+        'round_mode' => 'HALF_UP',
+    ],
+
+    Currency\CurrencyCode::class => [
         'currency_code' => 'PLN',
         'symbol' => 'zł',
     ],
-    
+
     'service_manager' => [
         'aliases' => [
-            CurrencyCodeInterface::class => CurrencyCode::class,
-            PreferencesInterface::class => Preferences::class,
+            Currency\CurrencyCodeInterface::class => Currency\CurrencyCode::class,
+            View\PreferencesInterface::class => View\Preferences::class,
+            Data\PresenterInterface::class => Data\Presenter::class,
+
+            Data\RepositoryInterface::class => Data\MockRepository::class,
+
+            Tax\TaxCalculatorInterface::class => Tax\TaxCalculator::class,
+            Intl\NumberFormatterInterface::class => Intl\NumberFormatter::class,
         ],
         'factories' => [
-            Preferences::class => PreferencesFactory::class,
-            CurrencyCode::class => DefaultCurrencyCodeFactory::class,
+            Currency\CurrencyCode::class => Currency\DefaultCurrencyCodeFactory::class,
+            View\Preferences::class => View\PreferencesFactory::class,
+            Data\Presenter::class => Data\PresenterFactory::class,
+
+            Data\MockRepository::class => Data\MockRepositoryFactory::class,
+
+            Tax\TaxCalculator::class => Tax\TaxCalculatorFactory::class,
+            Intl\NumberFormatter::class => Intl\NumberFormatterFactory::class,
         ],
     ],
 ];

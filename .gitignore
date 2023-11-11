@@ -1,5 +1,6 @@
 /_tmp/
 /.settings/
+/.idea/
 /vendor/
 /.buildpath
 /.project
