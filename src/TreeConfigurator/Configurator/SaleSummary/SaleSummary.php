@@ -17,7 +17,7 @@ class SaleSummary implements SaleSummaryInterface
 
     public function createProductPresentation(ViewProductInterface $product) : ProductInterface
     {
-        $converted = $this->currencyConverter->convert($product->getBasePriceNet(), $product->getCurrencySymbol());
+        $converted = $this->currencyConverter->convert($product->getBasePriceNet(), $product->getCurrencyCode());
         $price = $this->taxCalculator->calculate($converted->getAmount(), $product->getTaxRate());
 
         return new Product(

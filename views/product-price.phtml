@@ -11,8 +11,8 @@ $currencyFormatter = $shop->getCurrencyFormatter();
 
 printf("\n# %s\nNET %11s\tGROSS %11s (VAT %d%% / %s)\n",
         $product->getName(),
-        $currencyFormatter->format($product->getPriceNet(), $product->getCurrencySymbol()),
-        $currencyFormatter->format($product->getPriceGross(), $product->getCurrencySymbol()),
+        $currencyFormatter->format($product->getPriceNet(), $product->getCurrencyCode()),
+        $currencyFormatter->format($product->getPriceGross(), $product->getCurrencyCode()),
         $product->getTaxRate(),
-        $currencyFormatter->format($product->getTaxValue(), $product->getCurrencySymbol())
+        $currencyFormatter->format($product->getTaxValue(), $product->getCurrencyCode())
 );

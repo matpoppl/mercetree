@@ -6,7 +6,7 @@ abstract class AbstractProduct implements ProductPriceInterface
 {
     protected float $price;
     protected int $taxRate;
-    protected string $currencySymbol;
+    protected string $currencyCode;
 
     public function getPrice(): float
     {
@@ -28,14 +28,14 @@ abstract class AbstractProduct implements ProductPriceInterface
         $this->taxRate = $taxRate;
     }
 
-    public function getCurrencySymbol(): string
+    public function getCurrencyCode(): string
     {
-        return $this->currencySymbol;
+        return $this->currencyCode;
     }
 
-    public function setCurrencySymbol(string $currencySymbol): void
+    public function setCurrencyCode(string $currencyCode): void
     {
-        $this->currencySymbol = $currencySymbol;
+        $this->currencyCode = $currencyCode;
     }
 
     public function toStorageRecord() : array
@@ -43,7 +43,7 @@ abstract class AbstractProduct implements ProductPriceInterface
         return [
             'price' => $this->getPrice(),
             'tax_rate' => $this->getTaxRate(),
-            'currency_symbol' => $this->getCurrencySymbol(),
+            'currency_code' => $this->getCurrencyCode(),
         ];
     }
 
@@ -51,7 +51,7 @@ abstract class AbstractProduct implements ProductPriceInterface
     {
         $this->setPrice($record['price']);
         $this->setTaxRate($record['tax_rate']);
-        $this->setCurrencySymbol($record['currency_symbol']);
+        $this->setCurrencyCode($record['currency_code']);
     }
 
     public static function fromExample(array $options) : static

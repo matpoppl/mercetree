@@ -5,7 +5,7 @@ use Mateusz\Mercetree\TreeConfigurator\Feature\Color;
 use Mateusz\Mercetree\TreeConfigurator\Feature\SizeSymbol;
 use Mateusz\Mercetree\TreeConfigurator\Feature\Bauble;
 
-$taxCurrency = [ 'tax_rate' => 23, 'currency_symbol' => 'PLN' ];
+$taxCurrency = [ 'tax_rate' => 23, 'currency_code' => 'PLN' ];
 
 $treeDecorations = [
     /** @see Bauble::getFeatureSymbol() */

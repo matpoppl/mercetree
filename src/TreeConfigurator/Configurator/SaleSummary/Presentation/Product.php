@@ -28,7 +28,7 @@ class Product implements ProductInterface
         return $this->priceGross;
     }
 
-    public function getCurrencySymbol(): string
+    public function getCurrencyCode(): string
     {
         return $this->currencyCode;
     }

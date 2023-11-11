@@ -4,7 +4,7 @@
  * @see \Mateusz\Mercetree\TreeConfigurator\Data\Entity\TreeEntity
  */
 
-$taxCurrency = [ 'tax_rate' => 23, 'currency_symbol' => 'PLN' ];
+$taxCurrency = [ 'tax_rate' => 23, 'currency_code' => 'PLN' ];
 
 $trees = [
     // ID=tree:small

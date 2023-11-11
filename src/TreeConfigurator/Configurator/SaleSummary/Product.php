@@ -26,9 +26,9 @@ class Product implements ProductInterface
         return $this->entity->getTaxRate();
     }
 
-    public function getCurrencySymbol(): string
+    public function getCurrencyCode(): string
     {
-        return $this->entity->getCurrencySymbol();
+        return $this->entity->getCurrencyCode();
     }
 
     public function getQuantity(): int

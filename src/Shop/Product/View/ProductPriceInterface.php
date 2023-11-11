@@ -8,5 +8,5 @@ interface ProductPriceInterface
 
     public function getTaxRate() : int;
 
-    public function getCurrencySymbol() : string;
+    public function getCurrencyCode() : string;
 }
