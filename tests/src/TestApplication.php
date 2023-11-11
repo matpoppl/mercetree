@@ -3,6 +3,8 @@
 namespace Mateusz\Mercetree;
 
 use Mateusz\Mercetree\ServiceManager\Config\ConfigInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class TestApplication
 {
@@ -15,16 +17,24 @@ class TestApplication
     }
 
     /**
-     * @param string $id
-     * @return mixed
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @template T
+     * @param string|class-string<T> $id
+     * @return mixed|T
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function getService(string $id) : mixed
     {
         return $this->app->getService($id);
     }
 
+    /**
+     * @template T
+     * @param class-string<T> $id
+     * @return T
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function getComponent(string $id) : object
     {
         return $this->app->getComponent($id);

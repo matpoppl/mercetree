@@ -1,16 +1,32 @@
 <?php
 
-use Mateusz\Mercetree\Intl;
 use Mateusz\Mercetree\Shop\Tax;
 use Mateusz\Mercetree\Shop\View;
 use Mateusz\Mercetree\Shop\Currency;
-use Mateusz\Mercetree\Shop\Currency\Rate\Data;
+use Mateusz\Mercetree\Shop\Currency\Rate;
+use Mateusz\Mercetree\Shop\Currency\Converter;
+use Mateusz\Mercetree\Shop\Currency\Formatter;
+
+$dateToday = date('Y-m-d');
 
 return [
 
-    Intl\NumberFormatter::class => [
+    // output currency code
+    Currency\CurrencyCode::class => [
+        'currency_code' => 'PLN', // PLN|EUR
+    ],
+
+    // output currency formatter
+    Formatter\Formatter::class => [
         'locale' => 'pl_PL',
-        'default_currency' => 'PLN',
+    ],
+
+    // mock rates provider
+    Rate\RateProvider::class => [
+        'source_currency_code' => 'PLN',
+        'rates' => [
+            "EUR-{$dateToday}" => 4.44,
+        ],
     ],
 
     Tax\TaxCalculator::class => [
@@ -18,31 +34,26 @@ return [
         'round_mode' => 'HALF_UP',
     ],
 
-    Currency\CurrencyCode::class => [
-        'currency_code' => 'PLN',
-        'symbol' => 'zł',
-    ],
-
     'service_manager' => [
         'aliases' => [
-            Currency\CurrencyCodeInterface::class => Currency\CurrencyCode::class,
             View\PreferencesInterface::class => View\Preferences::class,
-            Data\PresenterInterface::class => Data\Presenter::class,
-
-            Data\RepositoryInterface::class => Data\MockRepository::class,
 
             Tax\TaxCalculatorInterface::class => Tax\TaxCalculator::class,
-            Intl\NumberFormatterInterface::class => Intl\NumberFormatter::class,
+
+            Currency\CurrencyCodeInterface::class => Currency\CurrencyCode::class,
+            Converter\CurrencyConverterInterface::class => Converter\Converter::class,
+            Rate\RateProviderInterface::class => Rate\RateProvider::class,
+            Formatter\CurrencyFormatterInterface::class => Formatter\Formatter::class,
         ],
         'factories' => [
-            Currency\CurrencyCode::class => Currency\DefaultCurrencyCodeFactory::class,
             View\Preferences::class => View\PreferencesFactory::class,
-            Data\Presenter::class => Data\PresenterFactory::class,
-
-            Data\MockRepository::class => Data\MockRepositoryFactory::class,
 
             Tax\TaxCalculator::class => Tax\TaxCalculatorFactory::class,
-            Intl\NumberFormatter::class => Intl\NumberFormatterFactory::class,
+
+            Currency\CurrencyCode::class => Currency\DefaultCurrencyCodeFactory::class,
+            Converter\Converter::class => Converter\ConverterFactory::class,
+            Rate\RateProvider::class => Rate\RateProviderFactory::class,
+            Formatter\Formatter::class => Formatter\FormatterFactory::class,
         ],
     ],
 ];

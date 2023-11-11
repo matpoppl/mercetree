@@ -5,11 +5,9 @@ namespace Mateusz\Mercetree\Shop;
 
 use Mateusz\Mercetree\Application\Component\ComponentManager;
 use Mateusz\Mercetree\Application\Component\ComponentManagerInterface;
-use Mateusz\Mercetree\Shop\Currency\Rate\Data\PresenterInterface;
 use Mateusz\Mercetree\Shop\View\PreferencesInterface;
 use Mateusz\Mercetree\TestApplication;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -20,7 +18,6 @@ class ShopComponentTest extends TestCase
 
     /**
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @uses ComponentManager
      */
     public function testFactory()
@@ -53,6 +50,5 @@ class ShopComponentTest extends TestCase
     public function testComposition(ShopComponent $shopComponent)
     {
         self::assertInstanceOf(PreferencesInterface::class, $shopComponent->getViewPreferences());
-        self::assertInstanceOf(PresenterInterface::class, $shopComponent->getCurrencyRateDataPresenter());
     }
 }

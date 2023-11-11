@@ -2,6 +2,7 @@
 
 namespace Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary;
 
+use Mateusz\Mercetree\Shop\Currency\Converter\CurrencyConverterInterface;
 use Mateusz\Mercetree\Shop\Tax\TaxCalculatorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\Collector\ProductCollectorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary\Presentation\ProductInterface;
@@ -10,13 +11,14 @@ use Mateusz\Mercetree\Shop\Product\View\ProductInterface as ViewProductInterface
 
 class SaleSummary implements SaleSummaryInterface
 {
-    public function __construct(private readonly ProductCollectorInterface $collector, private readonly TaxCalculatorInterface $taxCalculator)
+    public function __construct(private readonly ProductCollectorInterface $collector, private readonly TaxCalculatorInterface $taxCalculator, private readonly CurrencyConverterInterface $currencyConverter)
     {
     }
 
     public function createProductPresentation(ViewProductInterface $product) : ProductInterface
     {
-        $price = $this->taxCalculator->calculate($product->getBasePriceNet(), $product->getTaxRate());
+        $converted = $this->currencyConverter->convert($product->getBasePriceNet(), $product->getCurrencySymbol());
+        $price = $this->taxCalculator->calculate($converted->getAmount(), $product->getTaxRate());
 
         return new Product(
             $product->getName(),
@@ -24,8 +26,7 @@ class SaleSummary implements SaleSummaryInterface
             $price->getPriceGross(),
             $price->getTaxRate(),
             $price->getTaxValue(),
-            $product->getCurrencySymbol(),
-            $product->getQuantity());
+            $converted->getCurrencyCode());
     }
 
     public function getBaseProduct() : ProductInterface

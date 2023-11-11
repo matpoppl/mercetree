@@ -56,7 +56,8 @@ configs/dataset/tree-decorations.php
 ```
 oraz sprzedaż może być prowadzona również w innej walucie.
 ```
-@TODO WALUTA
+configs/shop_component.php ['currency_code' => 'PLN'] // PLN|EUR
+class Mateusz\Mercetree\Shop\Currency\Converter\Converter {}
 ```
 2. W jednym rzędzie nie mogą powtarzać się ozdoby
 ```

@@ -1,17 +1,20 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\Currency;
+namespace Mateusz\Mercetree\Shop\Currency\Rate;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Psr\Container\ContainerInterface;
 use Mateusz\Mercetree\ServiceManager\Config\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
-class DefaultCurrencyCodeFactory implements FactoryInterface
+class RateProviderFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $options ??= $container->get(ConfigInterface::class)->getArray($requestedName);
-        $currencyCode = $options['currency_code'] ?? null;
-        return new $requestedName($currencyCode);
+
+        $sourceCurrencyCode = $options['source_currency_code'];
+        $rates = $options['rates'];
+
+        return new $requestedName($sourceCurrencyCode, $rates);
     }
 }

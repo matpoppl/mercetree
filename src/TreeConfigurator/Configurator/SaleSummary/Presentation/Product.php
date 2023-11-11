@@ -10,18 +10,12 @@ class Product implements ProductInterface
         private readonly float $priceGross,
         private readonly float $taxRate,
         private readonly float $taxValue,
-        private readonly string $currencySymbol,
-        private readonly int $quantity)
+        private readonly string $currencyCode)
     {}
 
     public function getName(): string
     {
         return $this->name;
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->quantity;
     }
 
     public function getPriceNet(): float
@@ -36,7 +30,7 @@ class Product implements ProductInterface
 
     public function getCurrencySymbol(): string
     {
-        return $this->currencySymbol;
+        return $this->currencyCode;
     }
 
     public function getTaxValue(): float

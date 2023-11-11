@@ -20,7 +20,6 @@ class Application
      * @template T of object
      * @param string|class-string<T> $id
      * @return mixed|object<T>
-     * @psalm-suppress PossiblyUnusedMethod
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -33,8 +32,7 @@ class Application
      * @template T of object
      * @param class-string<T> $id
      * @return object<T>
-     * @psalm-suppress PossiblyUnusedMethod
-     * @throws Application\Component\NotFoundExceptionInterface
+     * @throws \UnexpectedValueException
      */
     public function getComponent(string $id) : object
     {
@@ -48,7 +46,6 @@ class Application
     /**
      * @param array<array-key, mixed> $config
      * @return self
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function create(array $config) : self
     {

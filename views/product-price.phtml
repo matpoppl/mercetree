@@ -7,11 +7,12 @@
 $product = $view->get('product');
 $shop = $view->get('shop');
 
-$currencyFormatter = $shop->getNumberFormatter();
+$currencyFormatter = $shop->getCurrencyFormatter();
 
-?>
-
-# <?= $product->getName() ?> (x<?= $product->getQuantity() ?>)
-<?= $currencyFormatter->formatCurrency($product->getPriceNet(), $product->getCurrencySymbol()) ?> NET
-<?= $currencyFormatter->formatCurrency($product->getPriceGross(), $product->getCurrencySymbol()) ?> GROSS
-(<?= $product->getTaxRate() ?>% / <?= $currencyFormatter->formatCurrency($product->getTaxValue(), $product->getCurrencySymbol()) ?>)
+printf("\n# %s\nNET %11s\tGROSS %11s (VAT %d%% / %s)\n",
+        $product->getName(),
+        $currencyFormatter->format($product->getPriceNet(), $product->getCurrencySymbol()),
+        $currencyFormatter->format($product->getPriceGross(), $product->getCurrencySymbol()),
+        $product->getTaxRate(),
+        $currencyFormatter->format($product->getTaxValue(), $product->getCurrencySymbol())
+);
