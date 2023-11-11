@@ -5,7 +5,7 @@ namespace Mateusz\Mercetree\TreeConfigurator\Builder\Constraint;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\AbstractConstraint;
 
 /**
- * @see UnknownPossibilitiesValidator
+ * @extends AbstractConstraint<UnknownPossibilitiesValidator>
  */
 class UnknownPossibilities extends AbstractConstraint
 {
@@ -14,5 +14,10 @@ class UnknownPossibilities extends AbstractConstraint
     public function __construct(array $symbols)
     {
         $this->symbols = array_combine($symbols, $symbols);
+    }
+
+    public function getValidatorType(): string
+    {
+        return UnknownPossibilitiesValidator::class;
     }
 }

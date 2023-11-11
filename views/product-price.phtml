@@ -11,7 +11,7 @@ $currencyFormatter = $shop->getNumberFormatter();
 
 ?>
 
-<b><?= $product->getName() ?> <small>(x<?= $product->getQuantity() ?>)</small></b><br />
+# <?= $product->getName() ?> (x<?= $product->getQuantity() ?>)
 <?= $currencyFormatter->formatCurrency($product->getPriceNet(), $product->getCurrencySymbol()) ?> NET
 <?= $currencyFormatter->formatCurrency($product->getPriceGross(), $product->getCurrencySymbol()) ?> GROSS
-<small>(<?= $product->getTaxRate() ?>% / <?= $currencyFormatter->formatCurrency($product->getTaxValue(), $product->getCurrencySymbol()) ?>)</small>
+(<?= $product->getTaxRate() ?>% / <?= $currencyFormatter->formatCurrency($product->getTaxValue(), $product->getCurrencySymbol()) ?>)

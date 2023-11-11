@@ -14,7 +14,7 @@ interface PossibilitiesBuilderInterface
 {
     /**
      * @param string $sizeSymbol
-     * @return ?string[]
+     * @return string[]
      */
-    public function getBySize(string $sizeSymbol) : ?array;
+    public function getBySize(string $sizeSymbol) : array;
 }

@@ -7,12 +7,6 @@ use Mateusz\Mercetree\TreeConfigurator\Feature\Bauble;
 
 $builtTree = $component->getBuiltTreeProvider()->get('tree:small');
 
-//$configurator = require __DIR__ . '/../examples/build-tree.php';
-//$configurator = require __DIR__ . '/../examples/build-specs.php';
-//$configurator = require __DIR__ . '/../examples/dbal.php';
-//$configurator = require __DIR__ . '/../examples/data.php';
-//$configurator = require __DIR__ . '/../examples/rules.php';
-
 $builtTree->getRow('row0')
     ->add( Bauble::create(size: 'small', color: 'red') )
     ->add( Bauble::create(size: 'small', color: 'blue') )

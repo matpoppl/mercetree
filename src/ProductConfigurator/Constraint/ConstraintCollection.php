@@ -7,7 +7,7 @@ use IteratorAggregate;
 use Traversable;
 
 /**
- * @template-implements IteratorAggregate<ConstraintInterface>
+ * @implements IteratorAggregate<ConstraintInterface>
  */
 class ConstraintCollection implements ConstraintCollectionInterface, IteratorAggregate
 {

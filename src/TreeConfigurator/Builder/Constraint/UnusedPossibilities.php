@@ -5,7 +5,7 @@ namespace Mateusz\Mercetree\TreeConfigurator\Builder\Constraint;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\AbstractConstraint;
 
 /**
- * @see UnusedPossibilitiesValidator
+ * @extends AbstractConstraint<UnusedPossibilitiesValidator>
  */
 class UnusedPossibilities extends AbstractConstraint
 {
@@ -18,5 +18,10 @@ class UnusedPossibilities extends AbstractConstraint
         $this->symbols = array_combine($symbols, $symbols);
         // use symbols count when there are more slots than unique symbols
         $this->totalSlotsCount = min(array_sum($rowCounts), count($this->symbols));
+    }
+
+    public function getValidatorType(): string
+    {
+        return UnusedPossibilitiesValidator::class;
     }
 }

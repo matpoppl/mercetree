@@ -18,68 +18,33 @@ $component = $app->getComponent(TreeConfiguratorComponentInterface::class);
 
 $view = $app->getService(ViewRendererInterface::class);
 
-?><!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-<head>
-    <title></title>
-    <style>
+$configurator = $component->getConfiguratorLoader()->load('tree:small');
 
-        .prices {
-            margin: 0 0 1em;
-            padding: 0;
-            display: grid;
-            grid-template-columns: repeat(6, auto);
-        }
+$configurator->getRow('row0')
+->add('model:bauble/size:medium/coating(color:green)');
 
-        .prices dd,
-        .prices dt { padding: 0; margin: 0; }
+$configurator->getRow('row1')
+->add('model:bauble/size:medium/coating(color:white)')
+->add('model:bauble/size:medium/coating(color:pink)')
+->add('model:bauble/size:small/coating(color:red)');
 
-    </style>
-</head>
-<body>
+$configurator->getRow('row2')
+->add('model:bauble/size:medium/coating(color:pink)')
+->add('model:bauble/size:medium/coating(color:green)');
 
-<pre><?php
+$configurator->getRow('row3')
+->add('model:bauble/size:medium/coating(color:pink)');
 
-    //$tmp = require __DIR__ . '/../examples/build-tree.php';
-    //$tmp = require __DIR__ . '/../examples/build-specs.php';
-    //$tmp = require __DIR__ . '/../examples/dbal.php';
-    //$tmp = require __DIR__ . '/../examples/data.php';
-    //$tmp = require __DIR__ . '/../examples/rules.php';
+$validationResults = $configurator->validate();
 
-    $configurator = $component->getConfiguratorLoader()->load('tree:small');
+$salesSummary = $configurator->getSaleSummary();
 
-    $configurator->getRow('row0')
-        ->add('model:bauble/size:small/coating(color:red)')
-        ->add('model:bauble/size:small/coating(color:blue)')
-        ->add('model:bauble/size:small/coating(color:yellow)')
-        ->add('model:bauble/size:medium/coating(color:green)');
+echo $view->render('validation-results.phtml', ['results' => $validationResults]);
 
-    $configurator->getRow('row1')
-        ->add('model:bauble/size:medium/coating(color:white)')
-        ->add('model:bauble/size:medium/coating(color:pink)')
-        ->add('model:bauble/size:small/coating(color:red)');
+if (! $validationResults->isValid()) return;
 
-    $configurator->getRow('row2')
-        ->add('model:bauble/size:medium/coating(color:pink)')
-        ->add('model:bauble/size:medium/coating(color:green)');
+echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $salesSummary->getBaseProduct()]);
 
-    $configurator->getRow('row3')
-        ->add('model:bauble/size:medium/coating(color:pink)');
-
-    $validationResults = $configurator->validate();
-
-
-    $salesSummary = $configurator->getSaleSummary();
-?></pre>
-
-<?= $view->render('validation-results.phtml', ['results' => $validationResults]) ?>
-
-<p><?= $view->render('product-price.phtml', ['shop' => $shop, 'product' => $salesSummary->getBaseProduct()]) ?></p>
-<ul>
-<?php foreach ($salesSummary->getDecorations() as $decoration): ?>
-    <li><?= $view->render('product-price.phtml', ['shop' => $shop, 'product' => $decoration]) ?></li>
-<?php endforeach; ?>
-</ul>
-
-</body>
-</html>
+foreach ($salesSummary->getDecorations() as $decoration) {
+    echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $decoration]);
+}

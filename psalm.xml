@@ -21,11 +21,6 @@
     </projectFiles>
 
     <issueHandlers>
-        <UnusedMethod>
-            <errorLevel type="suppress">
-                <directory name="src" />
-            </errorLevel>
-        </UnusedMethod>
 
         <UnusedParam>
             <errorLevel type="suppress">
@@ -45,5 +40,11 @@
                 <directory name="configs/dataset" />
             </errorLevel>
         </UndefinedGlobalVariable>
+
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <directory name="src" />
+            </errorLevel>
+        </PossiblyUnusedMethod>
     </issueHandlers>
 </psalm>

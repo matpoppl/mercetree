@@ -6,7 +6,7 @@ use Mateusz\Mercetree\ProductConfigurator\Constraint\AbstractConstraint;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\Exception\InvalidOptionsException;
 
 /**
- * @see OnlyNestedFeatureSymbolsValidator
+ * @extends AbstractConstraint<OnlyNestedFeatureSymbolsValidator>
  */
 class OnlyNestedFeatureSymbols extends AbstractConstraint
 {
@@ -28,5 +28,10 @@ class OnlyNestedFeatureSymbols extends AbstractConstraint
                 throw new InvalidOptionsException("Non-string feature symbol `{$symbol}`");
             }
         }
+    }
+
+    public function getValidatorType(): string
+    {
+        return OnlyNestedFeatureSymbolsValidator::class;
     }
 }

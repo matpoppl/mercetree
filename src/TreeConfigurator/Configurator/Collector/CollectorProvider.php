@@ -18,6 +18,11 @@ class CollectorProvider implements CollectorProviderInterface
     public function get(string $baseProductId) : FeatureCollectorInterface
     {
         $baseProduct = $this->treeRepository->getById($baseProductId);
+
+        if (! $baseProduct) {
+            throw ProductException::productNotFound($baseProductId);
+        }
+
         return new ProductCollector($this->decorationRepository, $this->entityFeatureFactory, $baseProduct);
     }
 }

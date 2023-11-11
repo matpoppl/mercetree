@@ -65,7 +65,7 @@ class PossibilitiesBuilder implements PossibilitiesBuilderInterface
         return $matches;
     }
 
-    public function getBySize(string $sizeSymbol) : ?array
+    public function getBySize(string $sizeSymbol) : array
     {
         foreach ($this->possibilities as $possibilities) {
             /** @var TreeEntity $tree */
@@ -75,6 +75,7 @@ class PossibilitiesBuilder implements PossibilitiesBuilderInterface
                 }
             }
         }
+        return [];
     }
 
     /**

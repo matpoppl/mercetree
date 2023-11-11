@@ -6,7 +6,7 @@ use Mateusz\Mercetree\ProductConfigurator\Constraint\AbstractConstraint;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\Exception\InvalidOptionsException;
 
 /**
- * @see FeatureRepeatLimitValidator
+ * @extends AbstractConstraint<FeatureRepeatLimitValidator>
  */
 class FeatureRepeatLimit extends AbstractConstraint
 {
@@ -15,5 +15,10 @@ class FeatureRepeatLimit extends AbstractConstraint
         if (null === $min && null === $max) {
             throw new InvalidOptionsException("At least `min` or `max` must be provided");
         }
+    }
+
+    public function getValidatorType(): string
+    {
+        return FeatureRepeatLimitValidator::class;
     }
 }
