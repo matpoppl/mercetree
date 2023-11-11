@@ -21,19 +21,22 @@ $view = $app->getService(ViewRendererInterface::class);
 $configurator = $component->getConfiguratorLoader()->load('tree:small');
 
 $configurator->getRow('row0')
-->add('model:bauble/size:medium/coating(color:green)');
+    ->add('model:bauble/size:small/coating(color:red)')
+    ->add('model:bauble/size:small/coating(color:blue)')
+    ->add('model:bauble/size:small/coating(color:yellow)')
+    ->add('model:bauble/size:medium/coating(color:green)');
 
 $configurator->getRow('row1')
-->add('model:bauble/size:medium/coating(color:white)')
-->add('model:bauble/size:medium/coating(color:pink)')
-->add('model:bauble/size:small/coating(color:red)');
+    ->add('model:bauble/size:medium/coating(color:white)')
+    ->add('model:bauble/size:medium/coating(color:pink)')
+    ->add('model:bauble/size:small/coating(color:red)');
 
 $configurator->getRow('row2')
-->add('model:bauble/size:medium/coating(color:pink)')
-->add('model:bauble/size:medium/coating(color:green)');
+    ->add('model:bauble/size:medium/coating(color:pink)')
+    ->add('model:bauble/size:medium/coating(color:green)');
 
 $configurator->getRow('row3')
-->add('model:bauble/size:medium/coating(color:pink)');
+    ->add('model:bauble/size:medium/coating(color:pink)');
 
 $validationResults = $configurator->validate();
 
