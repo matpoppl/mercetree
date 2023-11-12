@@ -15,6 +15,9 @@ class RowCount extends AbstractConstraint
         if (null === $min && null === $max) {
             throw new InvalidOptionsException("At least `min` or `max` must be provided");
         }
+        if (null !== $min && null !== $max && $min >  $max) {
+            throw new InvalidOptionsException("Invalid logic where `min` > `max`");
+        }
     }
 
     public function getValidatorType(): string

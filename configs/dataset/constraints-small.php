@@ -25,16 +25,19 @@ $tree = [
         'product_id' => $id,
         'slot_name' => null,
         /** @see \Mateusz\Mercetree\TreeConfigurator\Data\Entity\ConstraintEntity */
+        /** @see SmallTreeAcceptanceTest::testRowExistence() */
         'constraint_type' => Constraint\RowCount::class,
         'constraint_args' => ['min' => 4, 'max' => 4]
     ], [
         'product_id' => $id,
         'slot_name' => null,
+        /** @see SmallTreeAcceptanceTest::testUnusedPossibilities() */
         'constraint_type' => Constraint\UnusedPossibilities::class,
-        'constraint_args' => ['rowCounts' => [4, 3, 2, 1], 'symbols' => $possibilities]
+        'constraint_args' => ['rowCounts' => [4, 3, 2, 1], 'symbols' => $possibilities ]
     ], [
         'product_id' => $id,
         'slot_name' => null,
+        /** @see SmallTreeAcceptanceTest::testUnknownPossibilities() */
         'constraint_type' => Constraint\UnknownPossibilities::class,
         'constraint_args' => ['symbols' => $possibilities]
     ]

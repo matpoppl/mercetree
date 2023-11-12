@@ -12,6 +12,14 @@ use Mateusz\Mercetree\TreeConfigurator\Feature\Bauble;
 use Mateusz\Mercetree\TreeConfigurator\Feature\SizeSymbol;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers OnlyNestedFeatureSymbols
+ * @covers OnlyNestedFeatureSymbolsValidator
+ * @uses   ValidationContext
+ * @uses   Row
+ * @uses   Bauble
+ * @uses   SizeSymbol
+ */
 class OnlyNestedFeatureSymbolsValidatorTest extends TestCase
 {
     private function validate(Row $row): ValidationContextInterface

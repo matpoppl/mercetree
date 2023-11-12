@@ -12,13 +12,26 @@ use PHPUnit\Framework\TestCase;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Constraint;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\ErrorMessageInterface;
 
+/**
+ * @covers Constraint\FeatureRepeatLimit
+ * @covers Constraint\FeatureRepeatLimitValidator
+ * @covers Constraint\OnlyNestedFeature
+ * @covers Constraint\OnlyNestedFeatureSymbolsValidator
+ * @covers Constraint\RowCountValidator
+ * @covers Constraint\RowFeatureCountValidator
+ * @covers Constraint\UnknownPossibilities
+ * @covers Constraint\UnknownPossibilitiesValidator
+ * @covers Constraint\UnusedPossibilities
+ * @covers Constraint\UnusedPossibilitiesValidator
+ */
 class SmallTreeAcceptanceTest extends TestCase
 {
     /**
-     * @group RowFeatureCount
-     * @group FeatureRepeatLimit
-     * @group RowOnlyNestedFeatureSymbols
-     * @group BuiltTree
+     * @group SmallTree\RowFeatureCount
+     * @group SmallTree\FeatureRepeatLimit
+     * @group SmallTree\RowOnlyNestedFeatureSymbols
+     * @group SmallTree\BuiltTree
+     * @group SmallTree\UnknownPossibilities
      */
     public function testApplication() : Component
     {
@@ -33,10 +46,11 @@ class SmallTreeAcceptanceTest extends TestCase
 
     /**
      * @depends testApplication
-     * @group RowFeatureCount
-     * @group FeatureRepeatLimit
-     * @group RowOnlyNestedFeatureSymbols
-     * @group BuiltTree
+     * @group SmallTree\RowFeatureCount
+     * @group SmallTree\FeatureRepeatLimit
+     * @group SmallTree\RowOnlyNestedFeatureSymbols
+     * @group SmallTree\BuiltTree
+     * @group SmallTree\UnknownPossibilities
      */
     public function testValidatorCreation()
     {
@@ -45,10 +59,11 @@ class SmallTreeAcceptanceTest extends TestCase
 
     /**
      * @depends testApplication
-     * @group RowFeatureCount
-     * @group FeatureRepeatLimit
-     * @group RowOnlyNestedFeatureSymbols
-     * @group BuiltTree
+     * @group SmallTree\RowFeatureCount
+     * @group SmallTree\FeatureRepeatLimit
+     * @group SmallTree\RowOnlyNestedFeatureSymbols
+     * @group SmallTree\BuiltTree
+     * @group SmallTree\UnknownPossibilities
      */
     public function testComponent(Component $component) : BuiltTreeProviderInterface
     {
@@ -61,10 +76,11 @@ class SmallTreeAcceptanceTest extends TestCase
 
     /**
      * @depends testComponent
-     * @group RowFeatureCount
-     * @group FeatureRepeatLimit
-     * @group RowOnlyNestedFeatureSymbols
-     * @group BuiltTree
+     * @group SmallTree\RowFeatureCount
+     * @group SmallTree\FeatureRepeatLimit
+     * @group SmallTree\RowOnlyNestedFeatureSymbols
+     * @group SmallTree\BuiltTree
+     * @group SmallTree\UnknownPossibilities
      */
     public function testBuiltTreeProvider(BuiltTreeProviderInterface $builtTreeProvider) : BuiltTreeInterface
     {
@@ -96,29 +112,107 @@ class SmallTreeAcceptanceTest extends TestCase
         self::assertTrue($builtTree->getRows()->has('row1'));
         self::assertTrue($builtTree->getRows()->has('row2'));
         self::assertTrue($builtTree->getRows()->has('row3'));
-    }
 
-    /**
-     * @param string $rowId
-     * @param class-string $constraintType
-     * @return Closure(BuiltTreeInterface):array<ErrorMessageInterface>
-     */
-    public function createRowErrorFilter(string $rowId, string $constraintType) : Closure
-    {
-        $createFilter = function (string $constraintType) {
-            return fn($errors) => array_filter($errors, fn($error) => $constraintType === $error->getConstraintType());
-        };
-
-        $createValidator = function (TreeValidatorInterface $validator, string $rowId, closure $filter) {
-            return fn($builtTree) => $filter( $validator->validate($builtTree)->getRowErrors($rowId) );
-        };
-
-        return $createValidator($this->getValidator(), $rowId, $createFilter($constraintType));
+        $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\RowCount::class);
+        self::assertEmpty($errors);
     }
 
     /**
      * @depends testBuiltTreeProvider
-     * @group RowFeatureCount
+     * @group SmallTree\BuiltTree
+     */
+    public function testUnusedPossibilities(BuiltTreeInterface $builtTree)
+    {
+        $decorationsConfig = TestApplication::getInstance()->getTestConfig('tree-decorations');
+        $decorationsConfig = $decorationsConfig['options'];
+        $decorationsConfig = [...$decorationsConfig['small'], ...$decorationsConfig['medium']];
+
+        $decorationsCount = count($decorationsConfig);
+        // use all decorations except last to ensure an error
+        $insufficientCount = $decorationsCount - 1;
+        $isLastIteration = false;
+
+        for ($step = 0; $step < $decorationsCount; $step++) {
+
+            // last iteration/step
+            if ($step === $insufficientCount) {
+                // use all decorations
+                $insufficientCount = $decorationsCount;
+                $isLastIteration = true;
+            }
+
+            $useInStepCount = min($insufficientCount, ($step % $insufficientCount) + 1);
+
+            // populate
+            $nthSlotInTree = 0;
+            foreach ([
+                 'row0' => 4,
+                 'row3' => 3,
+                 'row2' => 2,
+                 'row1' => 1
+            ] as $rowId => $slotsInRowCount) {
+                $row = $builtTree->getRow($rowId)->reset();
+                while ($slotsInRowCount-- > 0) {
+                    // add decorations available in current step
+                    $row->add( Bauble::createFromArray($decorationsConfig[$nthSlotInTree++ % $useInStepCount]) );
+                }
+            }
+
+            // test
+            if ($isLastIteration) {
+                $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnusedPossibilities::class);
+                self::assertEmpty($errors, 'All decorations used at this point');
+            } else {
+                $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnusedPossibilities::class);
+                self::assertNotEmpty($errors, 'Still not using all decorations');
+            }
+        }
+    }
+
+    /**
+     * Check decoration unknown decorations
+     * @depends testBuiltTreeProvider
+     * @group SmallTree\UnknownPossibilities
+     */
+    public function testUnknownPossibilities(BuiltTreeInterface $builtTree)
+    {
+        $builtTree->getRow('row0')->reset();
+        $builtTree->getRow('row1')->reset();
+        $builtTree->getRow('row2')->reset();
+        $builtTree->getRow('row3')->reset();
+
+        $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnknownPossibilities::class);
+        self::assertEmpty($errors);
+
+        $this->populateValidTree($builtTree);
+
+        $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnknownPossibilities::class);
+        self::assertEmpty($errors);
+
+        // unknown in filled tree
+        $builtTree->getRow('row3')->reset()->add( Bauble::create(size: 'unknown', coating: 'unknown', model: 'unknown') );
+        $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnknownPossibilities::class);
+        self::assertNotEmpty($errors);
+        foreach ($errors as $error) {
+            self::assertEquals(Constraint\UnknownPossibilitiesValidator::ERROR_UNKNOWN, $error->getMessageTemplate());
+        }
+
+        // unknown in empty tree
+        $builtTree->getRow('row0')->reset();
+        $builtTree->getRow('row1')->reset();
+        $builtTree->getRow('row2')->reset();
+        $builtTree->getRow('row3')->reset()->add( Bauble::create(size: 'unknown', coating: 'unknown', model: 'unknown') );
+        $errors = self::filterErrorsByConstraint($this->getValidator()->validate($builtTree)->getTreeErrors(), Constraint\UnknownPossibilities::class);
+        self::assertNotEmpty($errors);
+        foreach ($errors as $error) {
+            self::assertEquals(Constraint\UnknownPossibilitiesValidator::ERROR_UNKNOWN, $error->getMessageTemplate());
+        }
+    }
+
+    /**
+     * Check decoration count in all rows
+     * @depends testBuiltTreeProvider
+     * @group SmallTree\RowFeatureCount
      */
     public function testRowFeatureCount(BuiltTreeInterface $builtTree) : BuiltTreeInterface
     {
@@ -162,8 +256,9 @@ class SmallTreeAcceptanceTest extends TestCase
     }
 
     /**
+     * Check decoration repeats in all rows
      * @depends testBuiltTreeProvider
-     * @group FeatureRepeatLimit
+     * @group SmallTree\FeatureRepeatLimit
      */
     public function testFeatureRepeatLimit(BuiltTreeInterface $builtTree) : BuiltTreeInterface
     {
@@ -198,9 +293,9 @@ class SmallTreeAcceptanceTest extends TestCase
 
     /**
      * @depends testBuiltTreeProvider
-     * @group RowOnlyNestedFeatureSymbols
+     * @group SmallTree\RowOnlyNestedFeatureSymbols
      */
-    public function testRowOnlyNestedFeatureSymbols(BuiltTreeInterface $builtTree) : BuiltTreeInterface
+    public function testOnlyNestedFeatureSymbols(BuiltTreeInterface $builtTree) : BuiltTreeInterface
     {
         $treeDecorations = TestApplication::getInstance()->getTestConfig('tree-decorations');
         $treeDecorations = $treeDecorations['options'];
@@ -233,9 +328,24 @@ class SmallTreeAcceptanceTest extends TestCase
 
     /**
      * @depends testBuiltTreeProvider
-     * @group BuiltTree
+     * @group SmallTree\BuiltTree
      */
-    public function testBuiltTree(BuiltTreeInterface $builtTree)
+    public function testValidTree(BuiltTreeInterface $builtTree)
+    {
+        $this->populateValidTree($builtTree);
+
+        $validationResults = $this->getValidator()->validate($builtTree);
+
+        self::assertInstanceOf(TreeValidatorResultInterface::class, $validationResults);
+        self::assertTrue($validationResults->isValid());
+        self::assertEmpty($validationResults->getTreeErrors());
+        self::assertEmpty($validationResults->getRowErrors('row0'));
+        self::assertEmpty($validationResults->getRowErrors('row1'));
+        self::assertEmpty($validationResults->getRowErrors('row2'));
+        self::assertEmpty($validationResults->getRowErrors('row3'));
+    }
+
+    private function populateValidTree(BuiltTreeInterface $builtTree) : void
     {
         $builtTree->getRow('row0')
             ->reset()
@@ -258,16 +368,34 @@ class SmallTreeAcceptanceTest extends TestCase
         $builtTree->getRow('row3')
             ->reset()
             ->add( Bauble::create(size: 'medium', coating: 'color:pink') );
+    }
 
-        $validationResults = $this->getValidator()->validate($builtTree);
+    /**
+     * @param string $rowId
+     * @param class-string $constraintType
+     * @return Closure(BuiltTreeInterface):array<ErrorMessageInterface>
+     */
+    public function createRowErrorFilter(string $rowId, string $constraintType) : Closure
+    {
+        $createFilter = function (string $constraintType) {
+            return fn($errors) => array_filter($errors, fn($error) => $constraintType === $error->getConstraintType());
+        };
 
-        self::assertInstanceOf(TreeValidatorResultInterface::class, $validationResults);
-        self::assertTrue($validationResults->isValid());
-        self::assertEmpty($validationResults->getTreeErrors());
-        self::assertEmpty($validationResults->getRowErrors('row0'));
-        self::assertEmpty($validationResults->getRowErrors('row1'));
-        self::assertEmpty($validationResults->getRowErrors('row2'));
-        self::assertEmpty($validationResults->getRowErrors('row3'));
+        $createValidator = function (TreeValidatorInterface $validator, string $rowId, closure $filter) {
+            return fn($builtTree) => $filter( $validator->validate($builtTree)->getRowErrors($rowId) );
+        };
+
+        return $createValidator($this->getValidator(), $rowId, $createFilter($constraintType));
+    }
+
+    /**
+     * @param ErrorMessageInterface[] $errors
+     * @param class-string $constraintType
+     * @return ErrorMessageInterface[]
+     */
+    private static function filterErrorsByConstraint(array $errors, string $constraintType) : array
+    {
+        return array_filter($errors, fn($error) => $constraintType === $error->getConstraintType());
     }
 
     private function getValidator() : TreeValidatorInterface

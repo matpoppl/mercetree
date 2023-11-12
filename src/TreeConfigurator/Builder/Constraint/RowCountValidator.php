@@ -7,7 +7,7 @@ use Mateusz\Mercetree\ProductConfigurator\Constraint\ConstraintInterface;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\ErrorMessage;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\Exception\InvalidConstraintTypeException;
 use Mateusz\Mercetree\ProductConfigurator\Constraint\Exception\InvalidValueTypeException;
-use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTree;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeInterface;
 
 /**
  * @see RowCount
@@ -23,8 +23,8 @@ class RowCountValidator extends AbstractConstraintValidator
             throw new InvalidConstraintTypeException($constraint, RowCount::class);
         }
 
-        if (! $value instanceof BuiltTree) {
-            throw new InvalidValueTypeException($value, BuiltTree::class);
+        if (! $value instanceof BuiltTreeInterface) {
+            throw new InvalidValueTypeException($value, BuiltTreeInterface::class);
         }
 
         $count = iterator_count($value->getRows());
