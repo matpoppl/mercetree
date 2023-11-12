@@ -4,8 +4,14 @@ namespace Mateusz\Mercetree\TreeConfigurator\Configurator\BuiltTree;
 
 use Mateusz\Mercetree\TreeConfigurator\Builder\Result\RowsInterface as ResultRowsInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\Collector\FeatureCollectorInterface;
+use IteratorAggregate;
+use ArrayIterator;
+use Traversable;
 
-class Rows implements RowsInterface
+/**
+ * @implements IteratorAggregate<RowInterface>
+ */
+class Rows implements RowsInterface, IteratorAggregate
 {
     /**
      * @var RowInterface[]
@@ -18,7 +24,15 @@ class Rows implements RowsInterface
 
     public function get(string $rowId) : RowInterface
     {
-        $this->rows[$rowId] = new Row($this->baseRows->get($rowId), $this->collector);
+        $this->rows[$rowId] = new Row($rowId, $this->baseRows->get($rowId), $this->collector);
         return $this->rows[$rowId];
+    }
+
+    /**
+     * @return Traversable<RowInterface>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->rows);
     }
 }

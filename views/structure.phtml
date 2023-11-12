@@ -1,0 +1,22 @@
+<?php
+
+/** @var Mateusz\Mercetree\View\Data\ViewDataInterface $view */
+/** @var Mateusz\Mercetree\TreeConfigurator\Configurator\Structure\StructureInterface $structure */
+
+$structure = $view->get('structure');
+
+$r = 0;
+$leafLength = 4 * $structure->getRowsCount();
+foreach($structure->getRows() as $row) {
+
+    $leafs = str_pad($row->getRowId(), $leafLength, "-", STR_PAD_BOTH);
+    $leafLength -= 4;
+
+    echo "\n" . str_pad($leafs, 32, " ", STR_PAD_BOTH) . "\n";
+
+    $i = 0;
+    foreach ($row->getFeatures() as $feature) {
+        echo "({$i}) {$feature->getFeatureSymbol()}\n";
+        $i++;
+    }
+}

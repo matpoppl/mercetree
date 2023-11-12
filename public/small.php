@@ -40,10 +40,10 @@ $configurator->getRow('row3')
 
 $validationResults = $configurator->validate();
 
-$salesSummary = $configurator->getSaleSummary();
-
 echo $view->render('validation-results.phtml', ['results' => $validationResults]);
 
 if (! $validationResults->isValid()) return;
 
-echo $view->render('sales-summary.phtml', ['shop' => $shop, 'salesSummary' => $salesSummary]);
+echo $view->render('structure.phtml', ['structure' => $configurator->getStructure()]);
+
+echo $view->render('sales-summary.phtml', ['shop' => $shop, 'salesSummary' => $configurator->getSaleSummary()]);

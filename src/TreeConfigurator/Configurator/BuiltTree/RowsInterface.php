@@ -3,8 +3,12 @@
 namespace Mateusz\Mercetree\TreeConfigurator\Configurator\BuiltTree;
 
 use Mateusz\Mercetree\TreeConfigurator\Builder\Result\RowExceptionInterface;
+use Traversable;
 
-interface RowsInterface
+/**
+ * @extends Traversable<RowInterface>
+ */
+interface RowsInterface extends Traversable
 {
     /**
      * @throws RowExceptionInterface
