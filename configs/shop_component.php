@@ -25,7 +25,7 @@ return [
     Rate\RateProvider::class => [
         'source_currency_code' => 'PLN',
         'rates' => [
-            "EUR-{$dateToday}" => 4.44,
+            $dateToday => ['EUR' => 4.44]
         ],
     ],
 

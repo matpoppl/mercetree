@@ -12,4 +12,6 @@ interface SaleSummaryInterface
      * @return ProductInterface[]
      */
     public function getDecorations() : array;
+
+    public function getProductsSummary() : ProductsSummaryInterface;
 }

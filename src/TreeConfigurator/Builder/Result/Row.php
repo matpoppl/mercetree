@@ -26,6 +26,12 @@ class Row implements RowInterface
         return $this->rowId;
     }
 
+    public function reset() : static
+    {
+        $this->features->reset();
+        return $this;
+    }
+
     public function add(FeatureInterface $feature) : static
     {
         $this->features->add($feature);

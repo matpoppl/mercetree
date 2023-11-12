@@ -17,31 +17,28 @@ class Bauble implements FeatureInterface, FeatureCollectionInterface, TreeDecora
 {
     public static function createFromArray(array $options) : static
     {
+        $coating = $options['coating'] ?? null;
+
         $size = $options['size'] ?? null;
-        $color = $options['color'] ?? null;
-        $handPainted = $options['handPainted'] ?? null;
         $model = $options['model'] ?? null;
 
-        return static::create($size, $color, $handPainted, $model);
+        foreach ([
+            'color' => 'color',
+             'handPainted' => 'hand-paint'
+        ] as $optionKey => $coatingPrefix) {
+            $coatingValue = $options[$optionKey] ?? null;
+            if ($coatingValue) {
+                $coating = "{$coatingPrefix}:{$coatingValue}";
+            }
+        }
+
+        return static::create($size, $coating, $model);
     }
 
-    public static function create(string $size, ?string $color = null, ?string $handPainted = null, ?string $model = null) : static
+    public static function create(string $size, string $coating, ?string $model = null) : static
     {
-        $coating = match(true) {
-            (null !== $color) => new Color( $color ),
-            (null !== $handPainted) => new HandPainted( $handPainted ),
-            // ... add more coatings
-        };
-
-        if (! $size) {
-            throw new \UnexpectedValueException('Size required');
-        }
-
-        if (! $coating) {
-            throw new \UnexpectedValueException('Coating required, use one of [color, handPainted]');
-        }
-
         $model = new ModelType( $model ?: 'bauble' );
+        $coating = new Coating($coating);
 
         return new static(
             $model,
@@ -60,7 +57,7 @@ class Bauble implements FeatureInterface, FeatureCollectionInterface, TreeDecora
     }
 
     /**
-     * @return Traversable<SizeSymbolInterface>
+     * @return Traversable<FeatureInterface>
      */
     public function getIterator(): Traversable
     {

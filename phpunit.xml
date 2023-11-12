@@ -11,6 +11,9 @@
         <testsuite name="integration">
             <directory>tests/integration</directory>
         </testsuite>
+        <testsuite name="acceptance">
+            <directory>tests/acceptance</directory>
+        </testsuite>
     </testsuites>
     <!--
         <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">

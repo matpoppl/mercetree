@@ -13,7 +13,7 @@ use Mateusz\Mercetree\TreeConfigurator\Data\Entity\TreeEntity;
 use Mateusz\Mercetree\TreeConfigurator\Data\Entity\TreeDecorationEntity;
 
 /**
- * @deprecated Demo only, helps with generating records in DB
+ * @deprecated Demo only. Helps with generating fake DB records
  */
 class PossibilitiesBuilder implements PossibilitiesBuilderInterface
 {

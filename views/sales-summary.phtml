@@ -1,0 +1,23 @@
+<?php
+
+/** @var Mateusz\Mercetree\View\Data\ViewDataInterface $view */
+/** @var Mateusz\Mercetree\Shop\ShopComponentInterface $shop */
+/** @var Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary\SaleSummaryInterface $salesSummary */
+
+$shop = $view->get('shop');
+$salesSummary = $view->get('salesSummary');
+$currencyFormatter = $shop->getCurrencyFormatter();
+
+echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $salesSummary->getBaseProduct()]);
+
+foreach ($salesSummary->getDecorations() as $decoration) {
+    echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $decoration]);
+}
+
+$summary = $salesSummary->getProductsSummary();
+
+printf("\n# SUMMARY\nNET %11s\tGROSS %11s (VAT %s)\n",
+    $currencyFormatter->format($summary->getPriceNet()),
+    $currencyFormatter->format($summary->getPriceGross()),
+    $currencyFormatter->format($summary->getTaxValue())
+);

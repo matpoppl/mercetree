@@ -4,6 +4,7 @@ namespace Mateusz\Mercetree\Shop\Currency\Rate;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mateusz\Mercetree\ServiceManager\Config\ConfigInterface;
+use Mateusz\Mercetree\Shop\Currency\Rate\Source\ArrayRateSource;
 use Psr\Container\ContainerInterface;
 
 class RateProviderFactory implements FactoryInterface
@@ -15,6 +16,6 @@ class RateProviderFactory implements FactoryInterface
         $sourceCurrencyCode = $options['source_currency_code'];
         $rates = $options['rates'];
 
-        return new $requestedName($sourceCurrencyCode, $rates);
+        return new $requestedName($sourceCurrencyCode, new ArrayRateSource($sourceCurrencyCode, $rates));
     }
 }

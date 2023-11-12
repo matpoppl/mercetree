@@ -44,16 +44,19 @@ $row0 = [
     [
         'product_id' => $id,
         'slot_name' => 'row0',
+        /** @see SmallTreeAcceptanceTest::testRowFeatureCount() */
         'constraint_type' => Constraint\RowFeatureCount::class,
         'constraint_args' => ['min' => 4, 'max' => 4]
     ], [
         'product_id' => $id,
         'slot_name' => 'row0',
+        /** @see SmallTreeAcceptanceTest::testFeatureRepeatLimit() */
         'constraint_type' => Constraint\FeatureRepeatLimit::class,
         'constraint_args' => ['max' => 1]
     ], [
         'product_id' => $id,
         'slot_name' => 'row0',
+        /** @see SmallTreeAcceptanceTest::testOnlyNestedFeatureSymbols() */
         'constraint_type' => Constraint\OnlyNestedFeatureSymbols::class,
         'constraint_args' => ['nestedFeatureType' => SizeSymbolInterface::class, 'allowedSymbols' => ['size:small', 'size:medium']]
     ]

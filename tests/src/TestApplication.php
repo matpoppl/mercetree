@@ -45,6 +45,23 @@ class TestApplication
         return $this->app->getService(ConfigInterface::class);
     }
 
+    public function getTestConfig($name) : array
+    {
+        $pathname = TEST_PATH_TESTS_CONFIGS . "{$name}.php";
+
+        if (! file_exists($pathname)) {
+            throw new \UnexpectedValueException("Config file don't exists `{$name}`");
+        }
+
+        $data = require $pathname;
+
+        if (! is_array($data)) {
+            throw new \UnexpectedValueException("Invalid config file contents `{$name}`. Expecting Array");
+        }
+
+        return $data;
+    }
+
     public static function getInstance() : self
     {
         static $instance = null;

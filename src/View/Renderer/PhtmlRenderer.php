@@ -40,7 +40,7 @@ class PhtmlRenderer implements ViewRendererInterface
             throw TemplateException::notFound($pathname, $this->paths);
         }
 
-        return $sandbox($pathname, new ViewData($this->translator, $data));
+        return $sandbox($pathname, new ViewData($this, $this->translator, $data));
     }
 
     public function findTemplatePathname(string $template) : ?string

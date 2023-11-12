@@ -16,25 +16,6 @@ class FeatureCollection implements FeatureCollectionInterface, IteratorAggregate
      */
     private array $features = [];
 
-    /**
-     * @param iterable<FeatureInterface> $collection
-     * @param class-string $type
-     * @return FeatureCollectionInterface
-     */
-    public static function filterCollectionByType(iterable $collection, string $type) : FeatureCollectionInterface
-    {
-        if ($collection instanceof Traversable) {
-            $collection = iterator_to_array($collection);
-        }
-
-        if (! is_array($collection)) {
-            throw new \UnexpectedValueException('Unsupported collection type');
-        }
-
-        $features = array_filter($collection, fn($feature) => is_a($feature, $type));
-        return new self($features);
-    }
-
     public function __construct(array $features = [])
     {
         foreach ($features as $feature) {
@@ -45,6 +26,11 @@ class FeatureCollection implements FeatureCollectionInterface, IteratorAggregate
     public function add(FeatureInterface $features) : void
     {
         $this->features[] = $features;
+    }
+
+    public function reset() : void
+    {
+        $this->features = [];
     }
 
     /**

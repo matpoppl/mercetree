@@ -2,10 +2,11 @@
 
 namespace Mateusz\Mercetree\TreeConfigurator\Builder\Result;
 
-use Mateusz\Mercetree\ProductConfigurator\Constraint\ConstraintCollectionInterface;
-
 interface BuiltTreeInterface
 {
+    /**
+     * @throws RowExceptionInterface
+     */
     public function getRow(string $rowId) : RowInterface;
 
     public function getRows() : RowsInterface;

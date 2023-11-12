@@ -3,8 +3,9 @@
 namespace Mateusz\Mercetree\View\Data;
 
 use Mateusz\Mercetree\Intl\Translator\TranslatorInterface;
+use Mateusz\Mercetree\View\Renderer\ViewRendererInterface;
 
-interface ViewDataInterface
+interface ViewDataInterface extends ViewRendererInterface
 {
     public function has(string $id) : bool;
 

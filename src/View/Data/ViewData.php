@@ -3,10 +3,11 @@
 namespace Mateusz\Mercetree\View\Data;
 
 use Mateusz\Mercetree\Intl\Translator\TranslatorInterface;
+use Mateusz\Mercetree\View\Renderer\ViewRendererInterface;
 
 class ViewData implements ViewDataInterface
 {
-    public function __construct(private readonly TranslatorInterface $translator, private array $data)
+    public function __construct(private readonly ViewRendererInterface $viewRenderer, private readonly TranslatorInterface $translator, private readonly array $data)
     {
     }
 
@@ -23,5 +24,10 @@ class ViewData implements ViewDataInterface
     public function getTranslator(): TranslatorInterface
     {
         return $this->translator;
+    }
+
+    public function render(string $template, array $data): string
+    {
+        return $this->viewRenderer->render($template, $data);
     }
 }

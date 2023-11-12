@@ -11,6 +11,13 @@ use Mateusz\Mercetree\Shop\Product\View\ProductInterface as ViewProductInterface
 
 class SaleSummary implements SaleSummaryInterface
 {
+    private ProductInterface $baseProduct;
+
+    /**
+     * @var ProductInterface[]
+     */
+    private array $decorations;
+
     public function __construct(private readonly ProductCollectorInterface $collector, private readonly TaxCalculatorInterface $taxCalculator, private readonly CurrencyConverterInterface $currencyConverter)
     {
     }
@@ -31,7 +38,8 @@ class SaleSummary implements SaleSummaryInterface
 
     public function getBaseProduct() : ProductInterface
     {
-        return $this->createProductPresentation( $this->collector->getBaseProduct() );
+        $this->baseProduct ??= $this->createProductPresentation( $this->collector->getBaseProduct() );
+        return $this->baseProduct;
     }
 
     /**
@@ -39,6 +47,22 @@ class SaleSummary implements SaleSummaryInterface
      */
     public function getDecorations() : array
     {
-        return array_map(fn($product) => $this->createProductPresentation($product), $this->collector->getDecorations());
+        $this->decorations ??= array_map(fn($product) => $this->createProductPresentation($product), $this->collector->getDecorations());
+        return $this->decorations;
+    }
+
+    public function getProductsSummary() : ProductsSummaryInterface
+    {
+        $pricesNet = 0;
+        $priceGross = 0;
+        $taxValue = 0;
+
+        foreach ([$this->getBaseProduct(), ...$this->getDecorations()] as $product) {
+            $pricesNet += $product->getPriceNet();
+            $priceGross += $product->getPriceGross();
+            $taxValue += $product->getTaxValue();
+        }
+
+        return new ProductsSummary($pricesNet, $priceGross, $taxValue);
     }
 }

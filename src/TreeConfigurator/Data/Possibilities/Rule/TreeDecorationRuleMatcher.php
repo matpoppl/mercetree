@@ -13,10 +13,10 @@ class TreeDecorationRuleMatcher implements RuleMatcherInterface
         }
 
         return match ($name) {
-            'size' => array_filter((array) $expected, fn($value) => $value === $entity->getSize()),
-            'coating' => array_filter((array) $expected, fn($value) => $value === $entity->getCoating()),
-            'model' => array_filter((array) $expected, fn($value) => $value === $entity->getModel()),
-            default => throw new UnsupportedRuleException($name, ['size','rows']),
+            'size' => array_filter($expected, fn($value) => $value === $entity->getSize()),
+            'coating' => array_filter($expected, fn($value) => $value === $entity->getCoating()),
+            'model' => array_filter($expected, fn($value) => $value === $entity->getModel()),
+            default => throw new UnsupportedRuleException($name, ['size', 'coating', 'model']),
         };
     }
 }

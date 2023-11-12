@@ -86,8 +86,9 @@ class Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary {}
 
 Program nie musi posiadać interface’u graficznego, musi za to spełniać wymagania funkcjonalne.
 ```
-tests/unit @TODO
-tests/integration @TODO
+tests/unit
+tests/integration
+tests/acceptance
 ```
 Program może posiadać uproszczoną infrastrukturę - nie musisz używać baz danych – wystarczy, że wytworzysz mosty pomiędzy biznesem a infrastrukturą wraz z odpowiednimi interfejsami.
 ```

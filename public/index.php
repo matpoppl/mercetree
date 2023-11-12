@@ -46,8 +46,4 @@ echo $view->render('validation-results.phtml', ['results' => $validationResults]
 
 if (! $validationResults->isValid()) return;
 
-echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $salesSummary->getBaseProduct()]);
-
-foreach ($salesSummary->getDecorations() as $decoration) {
-    echo $view->render('product-price.phtml', ['shop' => $shop, 'product' => $decoration]);
-}
+echo $view->render('sales-summary.phtml', ['shop' => $shop, 'salesSummary' => $salesSummary]);

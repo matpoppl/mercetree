@@ -18,10 +18,15 @@ class Rows implements RowsInterface, IteratorAggregate
     {
     }
 
+    public function has(string $rowId) : bool
+    {
+        return array_key_exists($rowId, $this->rows);
+    }
+
     public function get(string $rowId) : RowInterface
     {
         if (! array_key_exists($rowId, $this->rows)) {
-            throw new \DomainException("Row `{$rowId}` don't exists");
+            throw RowException::dontExists($rowId);
         }
 
         return $this->rows[$rowId];

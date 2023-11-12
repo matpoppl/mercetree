@@ -14,15 +14,14 @@ class ValidationContext implements ValidationContextInterface
      */
     private array $errors = [];
 
-    public function __construct()
-    {
-    }
-
     public function addError(ErrorMessageInterface $error) : void
     {
         $this->errors[] = $error;
     }
 
+    /**
+     * @return ErrorMessageInterface[]
+     */
     public function getErrors(): array
     {
         return $this->errors;
