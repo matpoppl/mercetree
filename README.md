@@ -1,7 +1,11 @@
 # Uruchomienie
-
 ```
-> php public/index.php
+> composer install
+```
+```
+> php public/small.php
+> php public/medium.php
+> php public/big.php
 ```
 ```
 > php vendor/bin/phpunit
