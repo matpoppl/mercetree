@@ -4,10 +4,10 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Constraint\Factory as ConstraintFactory;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Result;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator as BuilderValidator;
-use Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary;
-use Mateusz\Mercetree\TreeConfigurator\Data\Possibilities;
 use Mateusz\Mercetree\TreeConfigurator\Configurator;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\Collector;
+use Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary;
+use Mateusz\Mercetree\TreeConfigurator\Data\Possibilities;
 
 return [
 
@@ -17,7 +17,7 @@ return [
 
     'service_manager' => [
         'aliases' => [
-            Result\BuiltTreeProviderInterface::class => Result\BuiltTreeProvider::class,
+            Result\Provider\BuiltTreeProviderInterface::class => Result\Provider\BuiltTreeProvider::class,
             ConstraintFactory\ConstraintFromSpecsProviderInterface::class => ConstraintFactory\ConstraintFromSpecsProvider::class,
             BuilderValidator\TreeValidatorInterface::class => BuilderValidator\TreeValidator::class,
 
@@ -29,7 +29,7 @@ return [
             SaleSummary\SaleSummaryProviderInterface::class => SaleSummary\SaleSummaryProvider::class,
         ],
         'factories' => [
-            Result\BuiltTreeProvider::class => Result\BuiltTreeProviderFactory::class,
+            Result\Provider\BuiltTreeProvider::class => Result\Provider\BuiltTreeProviderFactory::class,
             ConstraintFactory\ConstraintFromSpecsProvider::class => ConstraintFactory\ConstraintFromSpecsProviderFactory::class,
             BuilderValidator\TreeValidator::class => InvokableFactory::class,
 

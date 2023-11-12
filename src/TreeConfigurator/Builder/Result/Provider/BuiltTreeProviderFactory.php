@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusz\Mercetree\TreeConfigurator\Builder\Result;
+namespace Mateusz\Mercetree\TreeConfigurator\Builder\Result\Provider;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mateusz\Mercetree\EntityManager\Repository\RepositoryManagerInterface;

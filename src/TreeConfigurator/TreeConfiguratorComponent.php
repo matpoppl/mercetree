@@ -4,11 +4,10 @@ namespace Mateusz\Mercetree\TreeConfigurator;
 
 use Mateusz\Mercetree\ServiceManager\ServiceManagerConstructorAwareInterface;
 use Mateusz\Mercetree\ServiceManager\ServiceManagerConstructorAwareTrait;
-use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeProviderInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\Provider\BuiltTreeProviderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\ConfiguratorLoaderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Data\Possibilities\PossibilitiesBuilderInterface;
-use Mateusz\Mercetree\TreeConfigurator\Product\ProductCollectorInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

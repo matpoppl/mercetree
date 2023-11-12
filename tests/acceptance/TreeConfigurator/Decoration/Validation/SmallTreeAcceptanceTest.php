@@ -1,16 +1,16 @@
 <?php
 
+use Mateusz\Mercetree\ProductConfigurator\Constraint\ErrorMessageInterface;
 use Mateusz\Mercetree\TestApplication;
-use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeProviderInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Constraint;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\Provider\BuiltTreeProviderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Result\RowExceptionInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorResultInterface;
 use Mateusz\Mercetree\TreeConfigurator\Feature\Bauble;
 use Mateusz\Mercetree\TreeConfigurator\TreeConfiguratorComponentInterface as Component;
 use PHPUnit\Framework\TestCase;
-use Mateusz\Mercetree\TreeConfigurator\Builder\Constraint;
-use Mateusz\Mercetree\ProductConfigurator\Constraint\ErrorMessageInterface;
 
 /**
  * @covers Constraint\FeatureRepeatLimit

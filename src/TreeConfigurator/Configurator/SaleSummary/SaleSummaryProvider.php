@@ -14,6 +14,8 @@ class SaleSummaryProvider implements SaleSummaryProviderInterface
 
     public function create(ProductCollectorInterface $collector) : SaleSummaryInterface
     {
-        return new SaleSummary($collector, $this->taxCalculator, $this->currencyConverter);
+        $baseProduct = $collector->getBaseProduct();
+        $decorations = $collector->getDecorations();
+        return new SaleSummary($this->taxCalculator, $this->currencyConverter, $baseProduct, $decorations);
     }
 }

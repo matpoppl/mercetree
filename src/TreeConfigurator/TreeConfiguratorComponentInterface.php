@@ -2,7 +2,7 @@
 
 namespace Mateusz\Mercetree\TreeConfigurator;
 
-use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeProviderInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\Provider\BuiltTreeProviderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\ConfiguratorLoaderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Data\Possibilities\PossibilitiesBuilderInterface;

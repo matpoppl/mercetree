@@ -6,5 +6,9 @@ use Mateusz\Mercetree\ProductConfigurator\Constraint\ConstraintInterface;
 
 interface ConstraintFromSpecsProviderInterface
 {
-    public function __invoke(ConstraintSpecsInterface $specs) : ConstraintInterface;
+    /**
+     * @param ConstraintSpecsInterface $specs
+     * @return ConstraintInterface|null
+     */
+    public function __invoke(ConstraintSpecsInterface $specs) : ?ConstraintInterface;
 }

@@ -3,7 +3,7 @@
 namespace Mateusz\Mercetree\TreeConfigurator\Configurator;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Mateusz\Mercetree\TreeConfigurator\Builder\Result\BuiltTreeProviderInterface;
+use Mateusz\Mercetree\TreeConfigurator\Builder\Result\Provider\BuiltTreeProviderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Builder\Validator\TreeValidatorInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\Collector\CollectorProviderInterface;
 use Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary\SaleSummaryProviderInterface;

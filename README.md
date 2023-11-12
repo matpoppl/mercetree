@@ -79,13 +79,21 @@ class Mateusz\Mercetree\TreeConfigurator\Builder\Constraint\UnusedPossibilities 
 Twoim zadaniem jest przygotowanie programu do dekorowania drzewek
 
 ```
-public/index.php
+public/small.php
+public/medium.php
+public/big.php
 class Mateusz\Mercetree\TreeConfigurator\Configurator {}
+tests/acceptance/TreeConfigurator/Decoration/Validation/SmallTreeAcceptanceTest.php
+tests/acceptance/TreeConfigurator/Decoration/Validation/MediumTreeAcceptanceTest.php
+tests/acceptance/TreeConfigurator/Decoration/Validation/BigTreeAcceptanceTest.php
 ```
 oraz wyceny udekorowania drzewek.
 ```
-public/index.php
+public/small.php
+public/medium.php
+public/big.php
 class Mateusz\Mercetree\TreeConfigurator\Configurator\SaleSummary {}
+tests/integration/TreeConfigurator/Configurator/SaleSummary/SaleSummaryTest.php
 ```
 
 Program nie musi posiadać interface’u graficznego, musi za to spełniać wymagania funkcjonalne.
