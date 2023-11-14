@@ -109,3 +109,10 @@ namespace Mateusz\Mercetree\Dbal {}
 namespace Mateusz\Mercetree\Dbal {}
 namespace Mateusz\Mercetree\TreeConfigurator\Data {}
 ```
+# PO ZA WYTYCZNYMI
+W opisie zadania nie było mowy o zapisywaniu zamówień.
+W osobnej gałęzi, poza wyznaczonym czasem, rozwijam możliwość zapisywanie zamówień.
+```
+https://github.com/matpoppl/mercetree/tree/create-order
+class Mateusz\Mercetree\Shop\OrderManager\CreateOrder {}
+```
