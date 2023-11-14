@@ -27,12 +27,9 @@ class TransactionsBeginCommand extends AbstractTransactionCommand
             if (! $this->warehouseManager->transactionBegin($this->items)) {
                 return false;
             }
-
-            if (! $this->warehouseManager->decreaseStock($this->items)) {
-                return false;
-            }
         } catch (WarehouseExceptionInterface $e) {
             $this->exceptions[] = $e;
+            return false;
         }
 
         try {

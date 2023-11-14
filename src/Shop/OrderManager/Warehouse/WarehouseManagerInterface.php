@@ -23,13 +23,6 @@ interface WarehouseManagerInterface
     public function decreaseStock(array $items): bool;
 
     /**
-     * @param StockItemInterface[] $items
-     * @throws WarehouseExceptionInterface
-     * @return StockItemInterface[]
-     */
-    public function findOutOfStock(array $items): array;
-
-    /**
      * @throws WarehouseExceptionInterface
      */
     public function transactionCommit(): bool;

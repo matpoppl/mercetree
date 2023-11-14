@@ -6,10 +6,9 @@ use Mateusz\Mercetree\ServiceManager\ServiceManagerConstructorAwareInterface;
 use Mateusz\Mercetree\ServiceManager\ServiceManagerConstructorAwareTrait;
 use Mateusz\Mercetree\Shop\Currency\Converter\CurrencyConverterInterface;
 use Mateusz\Mercetree\Shop\Currency\Formatter\CurrencyFormatterInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CreateOrderInterface;
 use Mateusz\Mercetree\Shop\Tax\TaxCalculatorInterface;
 use Mateusz\Mercetree\Shop\View\PreferencesInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class ShopComponent implements ShopComponentInterface, ServiceManagerConstructorAwareInterface
 {
@@ -33,5 +32,10 @@ class ShopComponent implements ShopComponentInterface, ServiceManagerConstructor
     public function getCurrencyFormatter(): CurrencyFormatterInterface
     {
         return $this->serviceManager->get(CurrencyFormatterInterface::class);
+    }
+
+    public function getCreateOrder(): CreateOrderInterface
+    {
+        return $this->serviceManager->get(CreateOrderInterface::class);
     }
 }

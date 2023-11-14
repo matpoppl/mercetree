@@ -116,3 +116,7 @@ W osobnej gałęzi, poza wyznaczonym czasem, rozwijam możliwość zapisywanie z
 https://github.com/matpoppl/mercetree/tree/create-order
 class Mateusz\Mercetree\Shop\OrderManager\CreateOrder {}
 ```
+Uruchomienie
+```
+> php public/order.php
+```

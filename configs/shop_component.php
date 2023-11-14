@@ -1,11 +1,17 @@
 <?php
 
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Handler as WarehouseHandler;
 use Mateusz\Mercetree\Shop\Tax;
 use Mateusz\Mercetree\Shop\View;
 use Mateusz\Mercetree\Shop\Currency;
 use Mateusz\Mercetree\Shop\Currency\Rate;
 use Mateusz\Mercetree\Shop\Currency\Converter;
 use Mateusz\Mercetree\Shop\Currency\Formatter;
+use Mateusz\Mercetree\Shop\OrderManager;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository as WarehouseRepository;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Mateusz\Mercetree\Shop\OrderManager\CreateOrder;
 
 $dateToday = date('Y-m-d');
 
@@ -44,6 +50,13 @@ return [
             Converter\CurrencyConverterInterface::class => Converter\Converter::class,
             Rate\RateProviderInterface::class => Rate\RateProvider::class,
             Formatter\CurrencyFormatterInterface::class => Formatter\Formatter::class,
+
+            OrderManager\CreateOrderInterface::class => OrderManager\CreateOrder::class,
+
+            Warehouse\WarehouseManagerInterface::class => Warehouse\WarehouseManager::class,
+            WarehouseRepository\WarehouseReadRepositoryInterface::class => WarehouseRepository\WarehouseReadRepository::class,
+            WarehouseRepository\WarehouseWriteRepositoryInterface::class => WarehouseRepository\WarehouseWriteRepository::class,
+            CreateOrder\CreateOrderManagerInterface::class => CreateOrder\CreateOrderManager::class,
         ],
         'factories' => [
             View\Preferences::class => View\PreferencesFactory::class,
@@ -54,6 +67,17 @@ return [
             Converter\Converter::class => Converter\ConverterFactory::class,
             Rate\RateProvider::class => Rate\RateProviderFactory::class,
             Formatter\Formatter::class => Formatter\FormatterFactory::class,
+
+            Warehouse\WarehouseManager::class => Warehouse\WarehouseManagerFactory::class,
+            OrderManager\CreateOrder::class => OrderManager\CreateOrderFactory::class,
+            WarehouseRepository\WarehouseReadRepository::class => WarehouseRepository\WarehouseReadRepositoryFactory::class,
+            WarehouseRepository\WarehouseWriteRepository::class => WarehouseRepository\WarehouseWriteRepositoryFactory::class,
+            CreateOrder\CreateOrderManager::class => InvokableFactory::class,
+
+            Warehouse\StockItemsRegistry::class => InvokableFactory::class,
+            WarehouseHandler\DecreaseStockItemsHandler::class => WarehouseHandler\DecreaseStockItemsHandlerFactory::class,
+            WarehouseHandler\IncreaseStockItemsHandler::class => WarehouseHandler\IncreaseStockItemsHandlerFactory::class,
+            WarehouseHandler\LockStockItemsHandler::class => WarehouseHandler\LockStockItemsHandlerFactory::class,
         ],
     ],
 ];

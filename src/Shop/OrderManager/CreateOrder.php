@@ -13,7 +13,7 @@ use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\CreateOrderManagerInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\WarehouseManagerInterface;
 
-class CreateOrder
+class CreateOrder implements CreateOrderInterface
 {
     public function __construct(private readonly WarehouseManagerInterface $warehouseManager, private readonly CreateOrderManagerInterface $createOrderManager)
     {
@@ -38,9 +38,9 @@ class CreateOrder
     /**
      * @throws OrderManagerExceptionInterface
      */
-    public function rollback(OrderRequestInterface $request) : bool
+    public function rollback(OrderRequestInterface $request) : void
     {
-        return $this->runCommand(new TransactionsRollbackCommand($this->createOrderManager, $this->warehouseManager, $request->getItems()));
+        $this->runCommand(new TransactionsRollbackCommand($this->createOrderManager, $this->warehouseManager, $request->getItems()));
     }
 
     /**
@@ -85,7 +85,7 @@ class CreateOrder
     {
         if (! $this->begin($request)) {
             $this->rollback($request);
-            return null;
+            throw new OrderManagerException("CreateOrder begin exception");
         }
 
         $process = new TransactionProcessCommand($this->createOrderManager, $this->warehouseManager, $request);
@@ -102,7 +102,11 @@ class CreateOrder
             return null;
         }
 
-        $this->commit();
+        if (! $this->commit()) {
+            $this->rollback($request);
+            return null;
+        }
+
         return $createdOrder;
     }
 }

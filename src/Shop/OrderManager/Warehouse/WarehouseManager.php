@@ -3,41 +3,26 @@
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
 use Mateusz\Mercetree\EntityManager\Repository\RepositoryExceptionInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\DecreaseStockItemsCommand;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\HasStockItemsCommand;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\IncreaseStockItemsCommand;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\LockStockItemsCommand;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseLockItemRepositoryInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandExceptionInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\CommandBus\CommandBusInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseWriteRepositoryInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class WarehouseManager implements WarehouseManagerInterface
 {
-    public function __construct(private readonly WarehouseReadRepositoryInterface $readRepository, private readonly WarehouseWriteRepositoryInterface $writeRepository)
+    public function __construct(private readonly WarehouseReadRepositoryInterface $readRepository, private readonly CommandBusInterface $commandBus)
     {
-    }
-
-    /**
-     * @throws WarehouseExceptionInterface
-     */
-    public function lock(WarehouseLockItemRepositoryInterface $repository, array $items) : bool
-    {
-        return $this->runCommand(new LockStockItemsCommand($repository, $items), "Rows lock error");
+        $this->commandBus->subscribe(Command\DecreaseStockItemsCommand::class, Handler\DecreaseStockItemsHandler::class);
+        $this->commandBus->subscribe(Command\IncreaseStockItemsCommand::class, Handler\IncreaseStockItemsHandler::class);
+        $this->commandBus->subscribe(Command\LockStockItemsCommand::class, Handler\LockStockItemsHandler::class);
     }
 
     /**
      * @throws WarehouseException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function runCommand(CommandInterface $cmd, string $exceptionMessage) : bool
-    {
-        if ($cmd->execute()) {
-            return true;
-        }
-
-        throw WarehouseException::commandException($cmd, $exceptionMessage);
-    }
-    
     public function transactionBegin(array $items) : bool
     {
         try {
@@ -48,14 +33,19 @@ class WarehouseManager implements WarehouseManagerInterface
             throw new WarehouseException("WriteRepository transaction begin error", 0 ,$ex);
         }
 
-        return $this->lock($this->readRepository, $items);
+        try {
+            $this->commandBus->dispatch(new Command\LockStockItemsCommand($items));
+        } catch (CommandExceptionInterface $ex) {
+            throw new WarehouseException("ReadRepository lock error", 0 ,$ex);
+        }
+
+        return true;
     }
 
     public function transactionRollback(array $items) : bool
     {
-        $exceptions = [];
-
         $success = 0;
+        $exceptions = [];
 
         try {
             $success += $this->readRepository->transactionRollback() ? 1 : 0;
@@ -64,8 +54,9 @@ class WarehouseManager implements WarehouseManagerInterface
         }
 
         try {
-            $success += $this->increaseStock($items) ? 1 : 0;
-        } catch (WarehouseExceptionInterface $exception) {
+            $this->commandBus->dispatch(new Command\IncreaseStockItemsCommand('write'));
+            $success++;
+        } catch (CommandExceptionInterface $exception) {
             $exceptions[] = $exception;
         }
 
@@ -85,29 +76,14 @@ class WarehouseManager implements WarehouseManagerInterface
         }
     }
 
-    /**
-     * @param StockItemInterface[] $items
-     * @return StockItemInterface[]
-     */
-    public function findOutOfStock(array $items): array
-    {
-        $cmd = new HasStockItemsCommand($this->readRepository, $items);
-
-        if ($cmd->execute()) {
-            return [];
-        }
-
-        return $cmd->getOutOtStock();
-    }
-
-    public function increaseStock(array $items): bool
-    {
-        return $this->runCommand(new IncreaseStockItemsCommand($this->writeRepository, $items), "Increase stock items error in write repository");
-    }
-
     public function decreaseStock(array $items): bool
     {
-        return $this->runCommand(new DecreaseStockItemsCommand($this->readRepository, $items), "Decrease stock items error in read repository")
-        && $this->runCommand(new DecreaseStockItemsCommand($this->writeRepository, $items), "Decrease stock items error in write repository");
+        try {
+            $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('read', $items));
+            $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('write', $items));
+        } catch (CommandExceptionInterface $exception) {
+            throw new WarehouseException("Increase stock error", 0 , $exception);
+        }
+        return true;
     }
 }

@@ -4,6 +4,7 @@ namespace Mateusz\Mercetree\Shop;
 
 use Mateusz\Mercetree\Shop\Currency\Converter\CurrencyConverterInterface;
 use Mateusz\Mercetree\Shop\Currency\Formatter\CurrencyFormatterInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CreateOrderInterface;
 use Mateusz\Mercetree\Shop\Tax\TaxCalculatorInterface;
 use Mateusz\Mercetree\Shop\View\PreferencesInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -34,4 +35,10 @@ interface ShopComponentInterface
      * @throws NotFoundExceptionInterface
      */
     public function getCurrencyFormatter(): CurrencyFormatterInterface;
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function getCreateOrder(): CreateOrderInterface;
 }

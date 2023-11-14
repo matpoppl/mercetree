@@ -49,13 +49,13 @@ class TransactionProcessCommand extends AbstractTransactionCommand
 
             $this->items = $this->createOrderManager->createOrderItems($this->entity, $this->request);
 
-            if (count($this->request->getItems()) === count($this->items)) {
-                $this->exceptions[] = new \UnexpectedValueException('Unexpected item count mismatch');
-                return false;
-            }
-
         } catch (CreateOrderExceptionInterface $e) {
             $this->exceptions[] = $e;
+        }
+
+        if (count($this->request->getItems()) !== count($this->items)) {
+            $this->exceptions[] = new \UnexpectedValueException("Unexpected item count mismatch");
+            return false;
         }
 
         return empty($this->exceptions);
