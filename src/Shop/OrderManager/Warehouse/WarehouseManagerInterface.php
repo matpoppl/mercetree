@@ -20,12 +20,6 @@ interface WarehouseManagerInterface
      * @param StockItemInterface[] $items
      * @throws WarehouseExceptionInterface
      */
-    public function increaseStock(array $items): bool;
-
-    /**
-     * @param StockItemInterface[] $items
-     * @throws WarehouseExceptionInterface
-     */
     public function decreaseStock(array $items): bool;
 
     /**

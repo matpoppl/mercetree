@@ -26,7 +26,6 @@ class TransactionsRollbackCommand extends AbstractTransactionCommand
         $success = 0;
 
         try {
-            $this->warehouseManager->decreaseStock($this->items);
             $success += $this->warehouseManager->transactionRollback($this->items) ? 1 : 0;
         } catch (WarehouseExceptionInterface $e) {
             $this->exceptions[] = $e;
