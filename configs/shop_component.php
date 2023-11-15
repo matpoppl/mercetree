@@ -9,6 +9,7 @@ use Mateusz\Mercetree\Shop\Currency\Rate;
 use Mateusz\Mercetree\Shop\Currency\Converter;
 use Mateusz\Mercetree\Shop\Currency\Formatter;
 use Mateusz\Mercetree\Shop\OrderManager;
+use Mateusz\Mercetree\Shop\OrderManager\Handler as OrderManagerHandler;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository as WarehouseRepository;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mateusz\Mercetree\Shop\OrderManager\CreateOrder;
@@ -75,9 +76,15 @@ return [
             CreateOrder\CreateOrderManager::class => InvokableFactory::class,
 
             Warehouse\StockItemsRegistry::class => InvokableFactory::class,
-            WarehouseHandler\DecreaseStockItemsHandler::class => WarehouseHandler\DecreaseStockItemsHandlerFactory::class,
-            WarehouseHandler\IncreaseStockItemsHandler::class => WarehouseHandler\IncreaseStockItemsHandlerFactory::class,
-            WarehouseHandler\LockStockItemsHandler::class => WarehouseHandler\LockStockItemsHandlerFactory::class,
+            WarehouseHandler\DecreaseStockItemsHandler::class => WarehouseHandler\StockItemsRegistryHandlerFactory::class,
+            WarehouseHandler\IncreaseStockItemsHandler::class => WarehouseHandler\StockItemsRegistryHandlerFactory::class,
+            WarehouseHandler\LockStockItemsHandler::class => WarehouseHandler\ReadRepositoryHandlerFactory::class,
+            WarehouseHandler\TransactionHandler::class => WarehouseHandler\ReadRepositoryHandlerFactory::class,
+
+            OrderManagerHandler\WarehouseBeginHandler::class => OrderManagerHandler\WarehouseHandlerFactory::class,
+            OrderManagerHandler\WarehouseCloseHandler::class => OrderManagerHandler\WarehouseHandlerFactory::class,
+            OrderManagerHandler\CreateOrderSubmitHandler::class => OrderManagerHandler\CreateOrderHandlerFactory::class,
+            OrderManagerHandler\CreateOrderCloseHandler::class => OrderManagerHandler\CreateOrderHandlerFactory::class,
         ],
     ],
 ];

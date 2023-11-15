@@ -6,7 +6,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
 use Psr\Container\ContainerInterface;
 
-class LockStockItemsHandlerFactory implements FactoryInterface
+class ReadRepositoryHandlerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {

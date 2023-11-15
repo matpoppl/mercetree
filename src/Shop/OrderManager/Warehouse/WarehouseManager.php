@@ -2,88 +2,77 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
-use Mateusz\Mercetree\EntityManager\Repository\RepositoryExceptionInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandExceptionInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\CommandBus\CommandBusInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandBusInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandExceptionInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\TransactionStatusEnum;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class WarehouseManager implements WarehouseManagerInterface
 {
-    public function __construct(private readonly WarehouseReadRepositoryInterface $readRepository, private readonly CommandBusInterface $commandBus)
+    public function __construct(private readonly CommandBusInterface $commandBus)
     {
+        $this->commandBus->subscribe(Command\TransactionCommand::class, Handler\TransactionHandler::class);
+        $this->commandBus->subscribe(Command\LockStockItemsCommand::class, Handler\LockStockItemsHandler::class);
         $this->commandBus->subscribe(Command\DecreaseStockItemsCommand::class, Handler\DecreaseStockItemsHandler::class);
         $this->commandBus->subscribe(Command\IncreaseStockItemsCommand::class, Handler\IncreaseStockItemsHandler::class);
-        $this->commandBus->subscribe(Command\LockStockItemsCommand::class, Handler\LockStockItemsHandler::class);
     }
 
     /**
-     * @throws WarehouseException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws WarehouseExceptionInterface
      */
-    public function transactionBegin(array $items) : bool
+    public function begin(array $items) : void
     {
         try {
-            if (! $this->readRepository->transactionBegin()) {
-                return false;
-            }
-        } catch (RepositoryExceptionInterface $ex) {
-            throw new WarehouseException("WriteRepository transaction begin error", 0 ,$ex);
-        }
-
-        try {
+            $this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::BEGIN));
             $this->commandBus->dispatch(new Command\LockStockItemsCommand($items));
-        } catch (CommandExceptionInterface $ex) {
-            throw new WarehouseException("ReadRepository lock error", 0 ,$ex);
-        }
-
-        return true;
-    }
-
-    public function transactionRollback(array $items) : bool
-    {
-        $success = 0;
-        $exceptions = [];
-
-        try {
-            $success += $this->readRepository->transactionRollback() ? 1 : 0;
-        } catch (RepositoryExceptionInterface $exception) {
-            $exceptions[] = $exception;
-        }
-
-        try {
-            $this->commandBus->dispatch(new Command\IncreaseStockItemsCommand('write'));
-            $success++;
-        } catch (CommandExceptionInterface $exception) {
-            $exceptions[] = $exception;
-        }
-
-        foreach ($exceptions as $exception) {
-            throw new WarehouseException("Transaction rollback error", 0 , $exception);
-        }
-
-        return $success > 1;
-    }
-
-    public function transactionCommit(): bool
-    {
-        try {
-            return $this->readRepository->transactionCommit();
-        } catch (RepositoryExceptionInterface $exception) {
-            throw new WarehouseException("Transaction commit error", 0 , $exception);
-        }
-    }
-
-    public function decreaseStock(array $items): bool
-    {
-        try {
             $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('read', $items));
             $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('write', $items));
         } catch (CommandExceptionInterface $exception) {
-            throw new WarehouseException("Increase stock error", 0 , $exception);
+            throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
+        } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
+            throw new WarehouseException("WarehouseManager submit command service container error", 0 , $exception);
         }
-        return true;
+    }
+
+    /**
+     * @throws WarehouseExceptionInterface
+     */
+    public function commit() : void
+    {
+        try {
+            $this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::COMMIT));
+        } catch (CommandExceptionInterface $exception) {
+            throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
+        } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
+            throw new WarehouseException("WarehouseManager submit command service container error", 0 , $exception);
+        }
+    }
+
+    /**
+     * @throws WarehouseExceptionInterface
+     */
+    public function rollback() : void
+    {
+        $commands = [
+            new Command\IncreaseStockItemsCommand('write'),
+            new Command\TransactionCommand(TransactionStatusEnum::ROLLBACK)
+        ];
+
+        $exceptions = [];
+
+        foreach ($commands as $command) {
+            try {
+                $this->commandBus->dispatch($command);
+            } catch (CommandExceptionInterface $exception) {
+                $exceptions[] = new WarehouseException("Increase stock error", 0 , $exception);
+            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
+                $exceptions[] = new WarehouseException("Increase stock service container error", 0 , $exception);
+            }
+        }
+
+        foreach ($exceptions as $exception) {
+            throw $exception;
+        }
     }
 }

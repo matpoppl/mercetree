@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command;
+namespace Mateusz\Mercetree\Shop\OrderManager\CommandBus;
 
 use Exception;
 use Throwable;

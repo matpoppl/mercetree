@@ -5,25 +5,17 @@ namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 interface WarehouseManagerInterface
 {
     /**
-     * @param StockItemInterface[] $items
      * @throws WarehouseExceptionInterface
      */
-    public function transactionBegin(array $items): bool;
-
-    /**
-     * @param StockItemInterface[] $items
-     * @throws WarehouseExceptionInterface
-     */
-    public function transactionRollback(array $items): bool;
-
-    /**
-     * @param StockItemInterface[] $items
-     * @throws WarehouseExceptionInterface
-     */
-    public function decreaseStock(array $items): bool;
+    public function begin(array $items) : void;
 
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function transactionCommit(): bool;
+    public function commit() : void;
+
+    /**
+     * @throws WarehouseExceptionInterface
+     */
+    public function rollback() : void;
 }

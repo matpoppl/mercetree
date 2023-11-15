@@ -2,8 +2,9 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Handler;
 
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandException;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandException;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\HandlerInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\DecreaseStockItemsCommand;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseWriteRepositoryInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\StockItemsRegistry;

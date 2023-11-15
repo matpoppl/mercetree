@@ -1,10 +1,7 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\CommandBus;
+namespace Mateusz\Mercetree\Shop\OrderManager\CommandBus;
 
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandExceptionInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Handler\HandlerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

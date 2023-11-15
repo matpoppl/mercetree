@@ -1,8 +1,7 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\CommandBus;
+namespace Mateusz\Mercetree\Shop\OrderManager\CommandBus;
 
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
 use Psr\Container\ContainerInterface;
 
 class CommandBus implements CommandBusInterface

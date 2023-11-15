@@ -13,6 +13,7 @@ class CreateOrderManager implements CreateOrderManagerInterface
      */
     public function createOrder(OrderRequestInterface $order) : OrderEntityInterface
     {
+        echo '[DEBUG] ' . __METHOD__ . "()\n";
         return new MockOrderEntity( date('Y-m-d H:i:s') );
     }
 
@@ -24,6 +25,7 @@ class CreateOrderManager implements CreateOrderManagerInterface
      */
     public function createOrderItems(OrderEntityInterface $order, OrderRequestInterface $orderRequest) : array
     {
+        echo '[DEBUG] ' . __METHOD__ . "({$order->getId()})\n";
         return array_map(fn($item) => new MockOrderItemEntity($order->getId(), $item->getStockItemId(), $item->getQuantity()), $orderRequest->getItems());
     }
 
@@ -50,7 +52,7 @@ class CreateOrderManager implements CreateOrderManagerInterface
      */
     public function transactionRollback() : bool
     {
-        echo '[DEBUG] ' . __METHOD__ . "()\n";
+        echo "[DEBUG] [DEBUG] " . __METHOD__ . "()\n";
         return true;
     }
 }

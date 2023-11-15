@@ -8,6 +8,9 @@ class MockOrderItemEntity implements OrderItemEntityInterface
 {
     public function __construct(private readonly string $orderId, private readonly string $productId, private readonly int $quantity)
     {
+        if ('ORDER_ERROR' === $productId) {
+            throw new CreateOrderException("ORDER_ERROR");
+        }
     }
 
     public function getOrderId(): string

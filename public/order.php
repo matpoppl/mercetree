@@ -25,12 +25,14 @@ $request = new MockOrderRequest([
 
     // testing rollback
     //new MockOrderRequestItem('READ_OUT_OF_STOCK', 4),
-    //new MockOrderRequestItem('WRITE_OUT_OF_STOCK', 4),
+    //new MockOrderRequestItem('WRITE_ERROR', 4),
+    //new MockOrderRequestItem('ORDER_ERROR', 4),
 ]);
 
 try {
     $created = $shop->getCreateOrder()->create($request);
 } catch (OrderManagerExceptionInterface $ex) {
+    echo $ex->getMessage();
     return;
 }
 

@@ -10,8 +10,8 @@ class MockWriteAdapter
 
     public function decreaseStock(string $itemId, int $quantity) : bool
     {
-        if ('WRITE_OUT_OF_STOCK' === $itemId) {
-            echo '[OUT_OF_STOCK] ' . __METHOD__ . "({$itemId},{$quantity}) !! OUT_OF_STOCK !!\n";
+        if ('WRITE_ERROR' === $itemId) {
+            echo '[WRITE_ERROR] ' . __METHOD__ . "({$itemId},{$quantity}) !! WRITE_ERROR !!\n";
             return false;
         }
         echo '[DEBUG] ' . __METHOD__ . "({$itemId}, {$quantity})\n";

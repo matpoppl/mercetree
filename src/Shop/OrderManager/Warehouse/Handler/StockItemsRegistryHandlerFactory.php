@@ -8,7 +8,7 @@ use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseWriteRepos
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\StockItemsRegistry;
 use Psr\Container\ContainerInterface;
 
-class IncreaseStockItemsHandlerFactory implements FactoryInterface
+class StockItemsRegistryHandlerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {

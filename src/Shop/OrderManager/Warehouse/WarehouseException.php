@@ -2,8 +2,8 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandException;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandException;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
 
 class WarehouseException extends \Exception implements WarehouseExceptionInterface
 {

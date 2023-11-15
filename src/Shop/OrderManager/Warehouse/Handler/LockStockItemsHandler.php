@@ -2,8 +2,9 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Handler;
 
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandException;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandException;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\HandlerInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\LockStockItemsCommand;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
 
@@ -21,7 +22,7 @@ class LockStockItemsHandler implements HandlerInterface
 
         foreach ($command->getStockItems() as $item) {
             if (! $this->repository->lockStockItem($item->getStockItemId(), $item->getQuantity()) ) {
-                throw new CommandException($command,"Repository  lock error");
+                throw new CommandException($command, "Repository lock error");
             }
         }
     }

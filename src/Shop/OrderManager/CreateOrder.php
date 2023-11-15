@@ -2,65 +2,22 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager;
 
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\CommandInterface;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\CommandWithExceptionsInterface;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\TransactionProcessCommand;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\TransactionsBeginCommand;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\TransactionsCommitCommand;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\Command\TransactionsRollbackCommand;
+use Mateusz\Mercetree\Shop\OrderManager\Command\TransactionCloseEnum;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandBusInterface;
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandExceptionInterface;
 use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\CreatedOrderInterface;
-use Mateusz\Mercetree\Shop\OrderManager\CreateOrder\CreateOrderManagerInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\WarehouseManagerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class CreateOrder implements CreateOrderInterface
 {
-    public function __construct(private readonly WarehouseManagerInterface $warehouseManager, private readonly CreateOrderManagerInterface $createOrderManager)
+    public function __construct(private readonly CommandBusInterface $commandBus)
     {
-    }
-
-    /**
-     * @throws OrderManagerExceptionInterface
-     */
-    public function begin(OrderRequestInterface $request) : bool
-    {
-        return $this->runCommand(new TransactionsBeginCommand($this->createOrderManager, $this->warehouseManager, $request->getItems()));
-    }
-
-    /**
-     * @throws OrderManagerExceptionInterface
-     */
-    public function commit() : bool
-    {
-        return $this->runCommand(new TransactionsCommitCommand($this->createOrderManager, $this->warehouseManager));
-    }
-
-    /**
-     * @throws OrderManagerExceptionInterface
-     */
-    public function rollback(OrderRequestInterface $request) : void
-    {
-        $this->runCommand(new TransactionsRollbackCommand($this->createOrderManager, $this->warehouseManager, $request->getItems()));
-    }
-
-    /**
-     * @throws OrderManagerExceptionInterface
-     */
-    public function runCommand(CommandInterface $cmd) : bool
-    {
-        if ($cmd->execute()) {
-            return true;
-        }
-
-        if (! $cmd instanceof CommandWithExceptionsInterface) {
-            return false;
-        }
-
-        foreach ($cmd->getExceptions() as $exception) {
-            throw new OrderManagerException("Command exception", 0, $exception);
-        }
-
-        return false;
+        $this->commandBus->subscribe(Command\WarehouseSubmitCommand::class, Handler\WarehouseBeginHandler::class);
+        $this->commandBus->subscribe(Command\WarehouseCloseCommand::class, Handler\WarehouseCloseHandler::class);
+        $this->commandBus->subscribe(Command\CreateOrderSubmitCommand::class, Handler\CreateOrderSubmitHandler::class);
+        $this->commandBus->subscribe(Command\CreateOrderCloseCommand::class, Handler\CreateOrderCloseHandler::class);
     }
 
     /**
@@ -68,45 +25,40 @@ class CreateOrder implements CreateOrderInterface
      */
     public function create(OrderRequestInterface $request) : ?CreatedOrderInterface
     {
+        $orderCmd = new Command\CreateOrderSubmitCommand($request);
+
+        $exceptions = [];
+
         try {
-            return $this->_create($request);
-        } catch (OrderManagerExceptionInterface $exception) {
+            $this->commandBus->dispatch(new Command\WarehouseSubmitCommand($request->getItems()));
+            $this->commandBus->dispatch($orderCmd);
+            $this->commandBus->dispatch(new Command\WarehouseCloseCommand(TransactionCloseEnum::COMMIT));
+            $this->commandBus->dispatch(new Command\CreateOrderCloseCommand(TransactionCloseEnum::COMMIT));
+            return $orderCmd->getCreatedOrder();
+        } catch (CommandExceptionInterface $exception) {
+            $exceptions[] = new OrderManagerException('CreateOrder submit error', 0,  $exception);
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $exception) {
+            $exceptions[] = new OrderManagerException('CreateOrder submit service container error', 0,  $exception);
         }
 
-        $this->rollback($request);
+        $rollbacks = [
+            new Command\WarehouseCloseCommand(TransactionCloseEnum::ROLLBACK),
+            // @TODO rollback order only after order begin
+            new Command\CreateOrderCloseCommand(TransactionCloseEnum::ROLLBACK),
+        ];
 
-        throw $exception;
-    }
-
-    /**
-     * @throws OrderManagerExceptionInterface
-     */
-    public function _create(OrderRequestInterface $request) : ?CreatedOrderInterface
-    {
-        if (! $this->begin($request)) {
-            $this->rollback($request);
-            throw new OrderManagerException("CreateOrder begin exception");
+        foreach ($rollbacks as $rollback) {
+            try {
+                $this->commandBus->dispatch($rollback);
+            } catch (CommandExceptionInterface $exception) {
+                $exceptions[] = new OrderManagerException('CreateOrder rollback error', 0,  $exception);
+            } catch (NotFoundExceptionInterface|ContainerExceptionInterface $exception) {
+                $exceptions[] = new OrderManagerException('CreateOrder rollback service container error', 0,  $exception);
+            }
         }
 
-        $process = new TransactionProcessCommand($this->createOrderManager, $this->warehouseManager, $request);
-
-        if (! $this->runCommand($process)) {
-            $this->rollback($request);
-            return null;
+        foreach ($exceptions as $exception) {
+            throw $exception;
         }
-
-        $createdOrder = $process->getCreatedOrder();
-
-        if (! $createdOrder) {
-            $this->rollback($request);
-            return null;
-        }
-
-        if (! $this->commit()) {
-            $this->rollback($request);
-            return null;
-        }
-
-        return $createdOrder;
     }
 }

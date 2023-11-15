@@ -2,6 +2,7 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command;
 
+use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\StockItemInterface;
 
 class LockStockItemsCommand implements CommandInterface

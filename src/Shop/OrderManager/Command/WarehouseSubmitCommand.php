@@ -1,22 +1,17 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command;
+namespace Mateusz\Mercetree\Shop\OrderManager\Command;
 
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\StockItemInterface;
 
-class DecreaseStockItemsCommand implements CommandInterface
+class WarehouseSubmitCommand implements CommandInterface
 {
     /**
      * @param StockItemInterface[] $items
      */
-    public function __construct(public readonly string $repoId, public readonly array $items)
+    public function __construct(private readonly array $items)
     {
-    }
-
-    public function getRepositoryId() : string
-    {
-        return $this->repoId;
     }
 
     /**
