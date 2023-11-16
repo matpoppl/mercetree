@@ -5,9 +5,6 @@ namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Handler;
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandException;
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\HandlerInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\IncreaseStockItemsCommand;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\StockItemsRegistry;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseRepositoryInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\RepositoryBeginCommand;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseRepositoryManagerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -15,10 +12,7 @@ use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\RepositoryException
 
 class RepositoryBeginHandler implements HandlerInterface
 {
-    /**
-     * @param StockItemsRegistry $stockItemsRegistry
-     */
-    public function __construct(private readonly WarehouseRepositoryManagerInterface $repositories, private readonly StockItemsRegistry $stockItemsRegistry)
+    public function __construct(private readonly WarehouseRepositoryManagerInterface $repositories)
     {
     }
 

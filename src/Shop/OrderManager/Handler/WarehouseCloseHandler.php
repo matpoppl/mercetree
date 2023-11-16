@@ -24,20 +24,18 @@ class WarehouseCloseHandler implements HandlerInterface
 
         try {
             
-            switch ($command->getTransactionClose()) {
-                case TransactionCloseEnum::COMMIT:
-                    $this->warehouseManager->commit();
-                    break;
-                case TransactionCloseEnum::ROLLBACK:
-                    $this->warehouseManager->rollback();
-                    break;
-                default:
-                    throw new CommandException($command, 'Unsupported TransactionClose operation');
-            }
-
-
-        } catch (WarehouseExceptionInterface $e) {
-            throw new CommandException($command, 'Warehouse manager rollback error', 0, $e);
+            $ok = match ($command->getTransactionClose()) {
+                TransactionCloseEnum::COMMIT => $this->warehouseManager->commit(),
+                TransactionCloseEnum::ROLLBACK => $this->warehouseManager->rollback(),
+                default => throw new CommandException($command, 'Unsupported TransactionClose type')
+            };
+            $exception = null;
+        } catch (WarehouseExceptionInterface $exception) {
+            $ok = false;
+        }
+        
+        if (! $ok) {
+            throw new CommandException($command, 'WarehouseManager close error', 0, $exception);
         }
     }
 }

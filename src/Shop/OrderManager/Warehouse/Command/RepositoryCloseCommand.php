@@ -3,13 +3,12 @@
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command;
 
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseRepositoryInterface;
 
-/**
- * @template T of WarehouseRepositoryInterface
- */
 class RepositoryCloseCommand implements CommandInterface
 {
     /**
+     * @template T of WarehouseRepositoryInterface
      * @param class-string<T> $items
      * @param RepositoryCloseEnum $items
      */
@@ -26,7 +25,7 @@ class RepositoryCloseCommand implements CommandInterface
     }
     
     /**
-     * @return class-string<T>
+     * @return WarehouseRepositoryInterface
      */
     public function getRepository() : string
     {

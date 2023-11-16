@@ -22,9 +22,14 @@ class WarehouseBeginHandler implements HandlerInterface
         }
 
         try {
-            $this->warehouseManager->begin($command->getStockItems());
-        } catch (WarehouseExceptionInterface $e) {
-            throw new CommandException($command, 'Warehouse manager submit error', 0, $e);
+            $ok = $this->warehouseManager->begin($command->getStockItems());
+            $exception = null;
+        } catch (WarehouseExceptionInterface $exception) {
+            $ok = false;
+        }
+        
+        if (! $ok) {
+            throw new CommandException($command, 'Warehouse manager submit error', 0, $exception);
         }
     }
 }

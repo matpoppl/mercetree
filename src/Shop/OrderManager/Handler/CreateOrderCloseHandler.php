@@ -23,20 +23,19 @@ class CreateOrderCloseHandler implements HandlerInterface
         }
 
         try {
-
-            switch ($command->getTransactionClose()) {
-                case TransactionCloseEnum::COMMIT:
-                    $this->createOrderManager->transactionCommit();
-                    break;
-                case TransactionCloseEnum::ROLLBACK:
-                    $this->createOrderManager->transactionRollback();
-                    break;
-                default:
-                    throw new CommandException($command, 'Unsupported TransactionClose');
-            }
-
-        } catch (CreateOrderExceptionInterface $e) {
-            throw new CommandException($command, 'Warehouse manager submit error', 0, $e);
+            
+            $ok = match ($command->getTransactionClose()) {
+                TransactionCloseEnum::COMMIT => $this->createOrderManager->transactionCommit(),
+                TransactionCloseEnum::ROLLBACK => $this->createOrderManager->transactionRollback(),
+                default => throw new CommandException($command, 'Unsupported TransactionClose type')
+            };
+            $exception = null;
+        } catch (CreateOrderExceptionInterface $exception) {
+            $ok = false;
+        }
+        
+        if (! $ok) {
+            throw new CommandException($command, 'CreateOrder close error', 0, $exception);
         }
     }
 }

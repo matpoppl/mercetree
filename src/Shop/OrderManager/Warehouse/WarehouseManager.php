@@ -4,7 +4,6 @@ namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandBusInterface;
 use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandExceptionInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\TransactionStatusEnum;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
@@ -22,11 +21,13 @@ class WarehouseManager implements WarehouseManagerInterface
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function begin(array $items) : void
+    public function begin(array $items) : bool
     {
         try {
             $this->commandBus->dispatch(new Command\RepositoryBeginCommand(WarehouseReadRepositoryInterface::class, $items));
             $this->commandBus->dispatch(new Command\RepositoryBeginCommand(WarehouseWriteRepositoryInterface::class, $items));
+            
+            return true;
         } catch (CommandExceptionInterface $exception) {
             throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
         } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
@@ -37,13 +38,13 @@ class WarehouseManager implements WarehouseManagerInterface
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function commit() : void
+    public function commit() : bool
     {
         try {
             $this->commandBus->dispatch(new Command\RepositoryCloseCommand(WarehouseWriteRepositoryInterface::class, RepositoryCloseEnum::COMMIT));
             $this->commandBus->dispatch(new Command\RepositoryCloseCommand(WarehouseReadRepositoryInterface::class, RepositoryCloseEnum::COMMIT));
             
-            //$this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::COMMIT));
+            return true;
         } catch (CommandExceptionInterface $exception) {
             throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
         } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
@@ -54,7 +55,7 @@ class WarehouseManager implements WarehouseManagerInterface
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function rollback() : void
+    public function rollback() : bool
     {
         $commands = [
             new Command\RepositoryCloseCommand(WarehouseReadRepositoryInterface::class, RepositoryCloseEnum::ROLLBACK),
@@ -76,5 +77,7 @@ class WarehouseManager implements WarehouseManagerInterface
         foreach ($exceptions as $exception) {
             throw $exception;
         }
+        
+        return true;
     }
 }

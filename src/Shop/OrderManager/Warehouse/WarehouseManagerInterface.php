@@ -7,15 +7,15 @@ interface WarehouseManagerInterface
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function begin(array $items) : void;
+    public function begin(array $items) : bool;
 
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function commit() : void;
+    public function commit() : bool;
 
     /**
      * @throws WarehouseExceptionInterface
      */
-    public function rollback() : void;
+    public function rollback() : bool;
 }

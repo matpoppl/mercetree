@@ -10,10 +10,6 @@ class WarehouseReadRepository implements WarehouseReadRepositoryInterface, Wareh
     {
     }
 
-    /**
-     * 
-     * @param OrderRequestItemInterface[] $items
-     */
     public function begin(array $items): bool
     {
         if (! $this->transactionBegin()) {
@@ -35,10 +31,6 @@ class WarehouseReadRepository implements WarehouseReadRepositoryInterface, Wareh
         return true;
     }
     
-    /**
-     *
-     * @param OrderRequestItemInterface[] $items
-     */
     public function commit(): bool
     {
         if (! $this->transactionCommit()) {
@@ -48,10 +40,6 @@ class WarehouseReadRepository implements WarehouseReadRepositoryInterface, Wareh
         return true;
     }
     
-    /**
-     *
-     * @param OrderRequestItemInterface[] $items
-     */
     public function rollback(): bool
     {
         if (! $this->transactionRollback()) {

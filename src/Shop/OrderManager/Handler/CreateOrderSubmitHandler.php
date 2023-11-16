@@ -20,9 +20,19 @@ class CreateOrderSubmitHandler implements HandlerInterface
         if (! $command instanceof CreateOrderSubmitCommand) {
             throw new CommandException($command,"Unsupported command type");
         }
-
+        
         try {
-            $this->createOrderManager->transactionBegin();
+            $ok = $this->createOrderManager->transactionBegin();
+            $exception = null;
+        } catch (CreateOrderExceptionInterface $exception) {
+            $ok = false;
+        }
+        
+        if (! $ok) {
+            throw new CommandException($command, 'Warehouse manager submit error', 0, $exception);
+        }
+        
+        try {
             $order = $this->createOrderManager->createOrder($command->getOrderRequest());
             $items = $this->createOrderManager->createOrderItems($order, $command->getOrderRequest());
 
