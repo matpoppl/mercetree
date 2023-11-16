@@ -2,12 +2,65 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository;
 
-class WarehouseReadRepository implements WarehouseReadRepositoryInterface
+use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestItemInterface;
+
+class WarehouseReadRepository implements WarehouseReadRepositoryInterface, WarehouseRepositoryInterface
 {
     public function __construct(private readonly MockReadAdapter $adapter)
     {
     }
 
+    /**
+     * 
+     * @param OrderRequestItemInterface[] $items
+     */
+    public function begin(array $items): bool
+    {
+        if (! $this->transactionBegin()) {
+            throw new RepositoryException("Transaction begin error");
+        }
+        
+        foreach($items as $item) {
+            if (! $this->lockStockItem($item->getStockItemId(), $item->getQuantity())) {
+                throw new RepositoryException("StockItem lock error `{$item->getStockItemId()}`/`{$item->getQuantity()}`");
+            }
+        }
+        
+        foreach($items as $item) {
+            if (! $this->decreaseStock($item->getStockItemId(), $item->getQuantity())) {
+                throw new RepositoryException("StockItem decrease stock error `{$item->getStockItemId()}`/`{$item->getQuantity()}`");
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     *
+     * @param OrderRequestItemInterface[] $items
+     */
+    public function commit(): bool
+    {
+        if (! $this->transactionCommit()) {
+            throw new RepositoryException("Transaction commit error");
+        }
+        
+        return true;
+    }
+    
+    /**
+     *
+     * @param OrderRequestItemInterface[] $items
+     */
+    public function rollback(): bool
+    {
+        if (! $this->transactionRollback()) {
+            throw new RepositoryException("Transaction rollback error");
+        }
+        
+        return true;
+    }
+    
     public function readStockQuantity(string $itemId) : int
     {
         return $this->adapter->readStockQuantity($itemId);

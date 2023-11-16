@@ -57,6 +57,7 @@ return [
             Warehouse\WarehouseManagerInterface::class => Warehouse\WarehouseManager::class,
             WarehouseRepository\WarehouseReadRepositoryInterface::class => WarehouseRepository\WarehouseReadRepository::class,
             WarehouseRepository\WarehouseWriteRepositoryInterface::class => WarehouseRepository\WarehouseWriteRepository::class,
+            WarehouseRepository\WarehouseRepositoryManagerInterface::class => WarehouseRepository\WarehouseRepositoryManager::class,
             CreateOrder\CreateOrderManagerInterface::class => CreateOrder\CreateOrderManager::class,
         ],
         'factories' => [
@@ -73,13 +74,12 @@ return [
             OrderManager\CreateOrder::class => OrderManager\CreateOrderFactory::class,
             WarehouseRepository\WarehouseReadRepository::class => WarehouseRepository\WarehouseReadRepositoryFactory::class,
             WarehouseRepository\WarehouseWriteRepository::class => WarehouseRepository\WarehouseWriteRepositoryFactory::class,
+            WarehouseRepository\WarehouseRepositoryManager::class => WarehouseRepository\WarehouseRepositoryManagerFactory::class,
             CreateOrder\CreateOrderManager::class => InvokableFactory::class,
 
             Warehouse\StockItemsRegistry::class => InvokableFactory::class,
-            WarehouseHandler\DecreaseStockItemsHandler::class => WarehouseHandler\StockItemsRegistryHandlerFactory::class,
-            WarehouseHandler\IncreaseStockItemsHandler::class => WarehouseHandler\StockItemsRegistryHandlerFactory::class,
-            WarehouseHandler\LockStockItemsHandler::class => WarehouseHandler\ReadRepositoryHandlerFactory::class,
-            WarehouseHandler\TransactionHandler::class => WarehouseHandler\ReadRepositoryHandlerFactory::class,
+            WarehouseHandler\RepositoryBeginHandler::class => WarehouseHandler\RepositoryBeginHandlerFactory::class,
+            WarehouseHandler\RepositoryCloseHandler::class => WarehouseHandler\RepositoryCloseHandlerFactory::class,
 
             OrderManagerHandler\WarehouseBeginHandler::class => OrderManagerHandler\WarehouseHandlerFactory::class,
             OrderManagerHandler\WarehouseCloseHandler::class => OrderManagerHandler\WarehouseHandlerFactory::class,

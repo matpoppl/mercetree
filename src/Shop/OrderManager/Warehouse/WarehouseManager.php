@@ -7,15 +7,16 @@ use Mateusz\Mercetree\Shop\OrderManager\CommandBus\CommandExceptionInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\TransactionStatusEnum;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseWriteRepositoryInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Command\RepositoryCloseEnum;
 
 class WarehouseManager implements WarehouseManagerInterface
 {
     public function __construct(private readonly CommandBusInterface $commandBus)
     {
-        $this->commandBus->subscribe(Command\TransactionCommand::class, Handler\TransactionHandler::class);
-        $this->commandBus->subscribe(Command\LockStockItemsCommand::class, Handler\LockStockItemsHandler::class);
-        $this->commandBus->subscribe(Command\DecreaseStockItemsCommand::class, Handler\DecreaseStockItemsHandler::class);
-        $this->commandBus->subscribe(Command\IncreaseStockItemsCommand::class, Handler\IncreaseStockItemsHandler::class);
+        $this->commandBus->subscribe(Command\RepositoryBeginCommand::class, Handler\RepositoryBeginHandler::class);
+        $this->commandBus->subscribe(Command\RepositoryCloseCommand::class, Handler\RepositoryCloseHandler::class);
     }
 
     /**
@@ -24,10 +25,8 @@ class WarehouseManager implements WarehouseManagerInterface
     public function begin(array $items) : void
     {
         try {
-            $this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::BEGIN));
-            $this->commandBus->dispatch(new Command\LockStockItemsCommand($items));
-            $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('read', $items));
-            $this->commandBus->dispatch(new Command\DecreaseStockItemsCommand('write', $items));
+            $this->commandBus->dispatch(new Command\RepositoryBeginCommand(WarehouseReadRepositoryInterface::class, $items));
+            $this->commandBus->dispatch(new Command\RepositoryBeginCommand(WarehouseWriteRepositoryInterface::class, $items));
         } catch (CommandExceptionInterface $exception) {
             throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
         } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
@@ -41,7 +40,10 @@ class WarehouseManager implements WarehouseManagerInterface
     public function commit() : void
     {
         try {
-            $this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::COMMIT));
+            $this->commandBus->dispatch(new Command\RepositoryCloseCommand(WarehouseWriteRepositoryInterface::class, RepositoryCloseEnum::COMMIT));
+            $this->commandBus->dispatch(new Command\RepositoryCloseCommand(WarehouseReadRepositoryInterface::class, RepositoryCloseEnum::COMMIT));
+            
+            //$this->commandBus->dispatch(new Command\TransactionCommand(TransactionStatusEnum::COMMIT));
         } catch (CommandExceptionInterface $exception) {
             throw new WarehouseException("WarehouseManager submit command error", 0 , $exception);
         } catch (ContainerExceptionInterface|NotFoundExceptionInterface $exception) {
@@ -55,8 +57,8 @@ class WarehouseManager implements WarehouseManagerInterface
     public function rollback() : void
     {
         $commands = [
-            new Command\IncreaseStockItemsCommand('write'),
-            new Command\TransactionCommand(TransactionStatusEnum::ROLLBACK)
+            new Command\RepositoryCloseCommand(WarehouseReadRepositoryInterface::class, RepositoryCloseEnum::ROLLBACK),
+            new Command\RepositoryCloseCommand(WarehouseWriteRepositoryInterface::class, RepositoryCloseEnum::ROLLBACK),
         ];
 
         $exceptions = [];

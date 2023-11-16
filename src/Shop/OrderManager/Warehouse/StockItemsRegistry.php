@@ -5,38 +5,38 @@ namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 class StockItemsRegistry
 {
     /**
-     * @var array<string, StockItemInterface[]>
+     * @var StockItemInterface[]
      */
     private array $decreased = [];
 
     /**
-     * @var array<string, StockItemInterface[]>
+     * @var StockItemInterface[]
      */
     private array $increased = [];
 
-    public function addDecreased(string $repoId, StockItemInterface $item) : void
+    public function addDecreased(StockItemInterface $item) : void
     {
-        $this->decreased[$repoId][] = $item;
+        $this->decreased[] = $item;
     }
 
     /**
      * @return StockItemInterface[]
      */
-    public function getDecreased(string $repoId) : array
+    public function getDecreased() : array
     {
-        return $this->decreased[$repoId] ?? [];
+        return $this->decreased;
     }
 
-    public function addIncreased(string $repoId, StockItemInterface $item) : void
+    public function addIncreased(StockItemInterface $item) : void
     {
-        $this->increased[$repoId][] = $item;
+        $this->increased[] = $item;
     }
 
     /**
      * @return StockItemInterface[]
      */
-    public function getIncreased(string $repoId) : array
+    public function getIncreased() : array
     {
-        return $this->increased[$repoId] ?? [];
+        return $this->increased;
     }
 }

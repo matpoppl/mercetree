@@ -23,7 +23,7 @@ class WarehouseCloseHandler implements HandlerInterface
         }
 
         try {
-
+            
             switch ($command->getTransactionClose()) {
                 case TransactionCloseEnum::COMMIT:
                     $this->warehouseManager->commit();
