@@ -32,6 +32,7 @@
         <PossiblyUnusedReturnValue>
             <errorLevel type="suppress">
                 <directory name="src/TreeConfigurator/Builder" />
+                <file name="src/Event/EventDispatcher.php" />
             </errorLevel>
         </PossiblyUnusedReturnValue>
 

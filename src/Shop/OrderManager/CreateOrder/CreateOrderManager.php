@@ -3,7 +3,7 @@
 namespace Mateusz\Mercetree\Shop\OrderManager\CreateOrder;
 
 use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderEntityInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderItemEntityInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderItemsEntityInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 
 class CreateOrderManager implements CreateOrderManagerInterface
@@ -17,16 +17,11 @@ class CreateOrderManager implements CreateOrderManagerInterface
         return new MockOrderEntity( date('Y-m-d H:i:s') );
     }
 
-    /**
-     * @param OrderEntityInterface $order
-     * @param OrderRequestInterface $orderRequest
-     * @return OrderItemEntityInterface[]
-     * @throws CreateOrderExceptionInterface
-     */
-    public function createOrderItems(OrderEntityInterface $order, OrderRequestInterface $orderRequest) : array
+    public function createOrderItems(OrderEntityInterface $order, OrderRequestInterface $orderRequest) : OrderItemsEntityInterface
     {
         echo '[DEBUG] ' . __METHOD__ . "({$order->getId()})\n";
-        return array_map(fn($item) => new MockOrderItemEntity($order->getId(), $item->getStockItemId(), $item->getQuantity()), $orderRequest->getItems());
+        $items = array_map(fn($item) => new MockOrderItemEntity($order->getId(), $item->getStockItemId(), $item->getQuantity()), $orderRequest->getItems());
+        return new MockOrderItemsEntity($items);
     }
 
     /**

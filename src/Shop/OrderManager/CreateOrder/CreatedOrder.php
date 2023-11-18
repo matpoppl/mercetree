@@ -3,15 +3,11 @@
 namespace Mateusz\Mercetree\Shop\OrderManager\CreateOrder;
 
 use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderEntityInterface;
-use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderItemEntityInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Order\Entity\OrderItemsEntityInterface;
 
 class CreatedOrder implements CreatedOrderInterface
 {
-    /**
-     * @param OrderEntityInterface $order
-     * @param OrderItemEntityInterface[] $items
-     */
-    public function __construct(private readonly OrderEntityInterface $order, private readonly array $items)
+    public function __construct(private readonly OrderEntityInterface $order, private readonly OrderItemsEntityInterface $items)
     {
     }
 
@@ -20,10 +16,7 @@ class CreatedOrder implements CreatedOrderInterface
         return $this->order;
     }
 
-    /**
-     * @return OrderItemEntityInterface[]
-     */
-    public function getItems() : array
+    public function getItems() : OrderItemsEntityInterface
     {
         return $this->items;
     }

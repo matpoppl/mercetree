@@ -16,6 +16,7 @@ use Mateusz\Mercetree\ServiceManager\Config as SMConfig;
 use Mateusz\Mercetree\TreeConfigurator\Data\Repository\ProductConstraintsInterface;
 use Mateusz\Mercetree\View\Renderer as ViewRenderer;
 use Mateusz\Mercetree\Intl\Translator;
+use \Mateusz\Mercetree\Application\Logger\MockLogger;
 
 return [
 
@@ -83,6 +84,8 @@ return [
 
             'cache.fast' => NullCache::class,
 
+            \Psr\Log\LoggerInterface::class => MockLogger::class,
+
             Dbal\DbalManagerInterface::class => Dbal\DbalManager::class,
             EntityManager\EntityManagerInterface::class => EntityManager\EntityManager::class,
             EMRepository\RepositoryManagerInterface::class => EMRepository\RepositoryManager::class,
@@ -100,6 +103,8 @@ return [
             Component\ComponentManager::class => Component\ComponentManagerFactory::class,
 
             NullCache::class => InvokableFactory::class,
+
+            MockLogger::class => InvokableFactory::class,
 
             Dbal\DbalManager::class => Dbal\DbalManagerFactory::class,
             EntityManager\EntityManager::class => EntityManager\EntityManagerFactory::class,

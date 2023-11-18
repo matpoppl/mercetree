@@ -2,7 +2,7 @@
 
 namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
-class StockItemsRegistry
+class StockItemsRegistry implements StockItemsRegistryInterface
 {
     /**
      * @var StockItemInterface[]
