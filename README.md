@@ -109,7 +109,7 @@ namespace Mateusz\Mercetree\Dbal {}
 namespace Mateusz\Mercetree\Dbal {}
 namespace Mateusz\Mercetree\TreeConfigurator\Data {}
 ```
-# PO ZA WYTYCZNYMI
+# POZA WYTYCZNYMI
 W opisie zadania nie było mowy o zapisywaniu zamówień.
 W osobnej gałęzi, poza wyznaczonym czasem, rozwijam możliwość zapisywanie zamówień.
 ```
