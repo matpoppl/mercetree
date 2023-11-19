@@ -5,11 +5,12 @@ namespace Mateusz\Mercetree\Event;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
-use Psr\Log\LoggerInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
-    public function __construct(private readonly ListenerProviderInterface $listenerProvider, private readonly LoggerInterface $logger)
+    private array $queue = [];
+
+    public function __construct(private readonly ListenerProviderInterface $listenerProvider)
     {
     }
 
@@ -36,30 +37,10 @@ class EventDispatcher implements EventDispatcherInterface
 
     public function _dispatch(object $event, callable $listener) : void
     {
-        $return = $listener($event);
+        $this->queue[] = $event;
 
-        $eventsToEmmit = [];
-
-        if ($return instanceof EmittedEventInterface) {
-            $eventsToEmmit[] = $return;
-        } else if (is_iterable($return)) {
-            foreach ($return as $possibleEvent) {
-                if ($possibleEvent instanceof EmittedEventInterface) {
-                    $eventsToEmmit[] = $possibleEvent;
-                }
-            }
-        }
-
-        foreach ($eventsToEmmit as $eventToEmmit) {
-
-            if ($event === $eventToEmmit) {
-                $this->logger->error("Possible infinite event dispatch loop detected", [
-                    'exception' => new DispatchedDispatchedEventException($eventToEmmit, "Possible infinite event dispatch loop detected"),
-                ]);
-                continue;
-            }
-
-            $this->dispatch($eventToEmmit);
+        while ($currentEvent = array_shift($this->queue)) {
+            $listener($currentEvent);
         }
     }
 }

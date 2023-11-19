@@ -1,12 +1,12 @@
 <?php
 
-namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Listener\ReadRepository;
+namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Repository\WarehouseReadRepositoryInterface;
 use Psr\Container\ContainerInterface;
 
-class CreateOrderProcessListenerFactory implements FactoryInterface
+class OrderStockManagerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {

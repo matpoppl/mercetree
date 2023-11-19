@@ -5,6 +5,7 @@ namespace Mateusz\Mercetree\Shop\OrderManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mateusz\Mercetree\ServiceManager\Config\ConfigInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Event\CreateOrderEventManagerInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Order\Request\RequestStatusManagerInterface;
 use Psr\Container\ContainerInterface;
 
 class CreateOrderFactory implements FactoryInterface
@@ -23,6 +24,6 @@ class CreateOrderFactory implements FactoryInterface
             $evtMgr->on($evtType, $listener);
         }
 
-        return new $requestedName($evtMgr);
+        return new $requestedName($evtMgr, $container->get(RequestStatusManagerInterface::class));
     }
 }

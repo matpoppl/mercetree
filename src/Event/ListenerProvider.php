@@ -59,12 +59,22 @@ class ListenerProvider implements ListenerProviderInterface
         foreach ($listeners as $key => $listener) {
             if (is_string($listener)) {
                 try {
-                    $listeners[$key] = $this->container->get($listener);
+                    $listenerCallable = $this->container->get($listener);
                 } catch (NotFoundExceptionInterface|ContainerExceptionInterface $exception) {
-                    $this->logger->critical('Listener container error', [
+                    $this->logger->critical("Listener `{$listener}` container error", [
                         'exception' => $exception,
                     ]);
+                    continue;
                 }
+
+                if (! is_callable($listenerCallable)) {
+                    $this->logger->critical("Listener is not callable", [
+                        'exception' => new \UnexpectedValueException("Listener `{$listener}` is not callable"),
+                    ]);
+                    continue;
+                }
+
+                $listeners[$key] = $listenerCallable;
             }
         }
 

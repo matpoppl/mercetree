@@ -1,7 +1,6 @@
 <?php
 
 use Mateusz\Mercetree\Application;
-use Mateusz\Mercetree\Shop\OrderManager\OrderManagerExceptionInterface;
 use Mateusz\Mercetree\Shop\ShopComponentInterface;
 use Mateusz\Mercetree\TreeConfigurator\TreeConfiguratorComponentInterface;
 use Mateusz\Mercetree\View\Renderer\ViewRendererInterface;
@@ -18,7 +17,7 @@ $app = Application::create(require __DIR__ . '/../configs/app.php');
 
 $shop = $app->getComponent(ShopComponentInterface::class);
 
-$request = new MockOrderRequest([
+$request = new MockOrderRequest('id:99', [
     new MockOrderRequestItem('bauble:small', 4),
     new MockOrderRequestItem('bauble:medium', 4),
     new MockOrderRequestItem('bauble:big', 4),
@@ -31,8 +30,13 @@ $request = new MockOrderRequest([
 
 try {
     $created = $shop->getCreateOrder()->create($request);
-} catch (OrderManagerExceptionInterface $ex) {
+} catch (\Throwable $ex) {
     echo $ex->getMessage();
+    return;
+}
+
+if (! $created) {
+    echo "## CREATE ERROR\n";
     return;
 }
 
