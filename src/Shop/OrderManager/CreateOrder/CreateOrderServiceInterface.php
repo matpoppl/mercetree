@@ -6,7 +6,14 @@ use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 
 interface CreateOrderServiceInterface
 {
-    public function createOrder(OrderRequestInterface $request) : void;
-    public function confirmOrder(OrderRequestInterface $request) : void;
+    /**
+     * @throws CreateOrderExceptionInterface
+     */
+    public function createOrder(OrderRequestInterface $request) : bool;
+    
+    /**
+     * @throws CreateOrderExceptionInterface
+     */
+    public function confirmOrder(OrderRequestInterface $request) : bool;
     public function cancelOrder(OrderRequestInterface $request) : void;
 }

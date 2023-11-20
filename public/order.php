@@ -6,6 +6,7 @@ use Mateusz\Mercetree\TreeConfigurator\TreeConfiguratorComponentInterface;
 use Mateusz\Mercetree\View\Renderer\ViewRendererInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\MockOrderRequest;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\MockOrderRequestItem;
+use Mateusz\Mercetree\Shop\OrderManager\CreateOrderExceptionInterface;
 
 /** @var ShopComponentInterface $shop */
 /** @var TreeConfiguratorComponentInterface $component */
@@ -24,13 +25,13 @@ $request = new MockOrderRequest('id:99', [
 
     // testing rollback
     //new MockOrderRequestItem('READ_OUT_OF_STOCK', 4),
-    //new MockOrderRequestItem('WRITE_ERROR', 4),
+    //new MockOrderRequestItem('WRITE_ERROR', 4), // is EventStore write critical ?
     //new MockOrderRequestItem('ORDER_ERROR', 4),
 ]);
 
 try {
     $created = $shop->getCreateOrder()->create($request);
-} catch (\Throwable $ex) {
+} catch (CreateOrderExceptionInterface $ex) {
     echo $ex->getMessage();
     return;
 }

@@ -6,9 +6,15 @@ use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 
 interface OrderStockServiceInterface
 {
-    public function decreaseStock(OrderRequestInterface $request) : void;
-
-    public function confirmDecrease(OrderRequestInterface $request) : void;
+    /**
+     * @throws OrderStockManagerExceptionInterface
+     */
+    public function decreaseStock(OrderRequestInterface $request) : bool;
+    
+    /**
+     * @throws OrderStockManagerExceptionInterface
+     */
+    public function confirmDecrease(OrderRequestInterface $request) : bool;
 
     public function cancelDecrease(OrderRequestInterface $request) : void;
 }

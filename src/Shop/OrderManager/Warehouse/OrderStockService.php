@@ -9,35 +9,28 @@ use Psr\Log\LoggerInterface;
 
 class OrderStockService implements OrderStockServiceInterface
 {
-    public function __construct(private readonly OrderStockManagerInterface $manager, private readonly EventDispatcherInterface $eventDispatcher, private readonly LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly OrderStockManagerInterface $manager,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
-    public function decreaseStock(OrderRequestInterface $request) : void
+    public function decreaseStock(OrderRequestInterface $request) : bool
     {
-        try {
-            $records = $this->manager->decreaseStock($request->getItems());
-        } catch (OrderStockManagerExceptionInterface $exception) {
-            $records = false;
-            $this->logger->error("Warehouse decrease stock error", [
-                'exception' => $exception,
-            ]);
-        }
+        $records = $this->manager->decreaseStock($request->getItems());
 
-        if (false !== $records) {
-            $this->eventDispatcher->dispatch(new OrderStockDecreasedEvent($request->getId(), $records));
+        if (! $records) {
+            return false;
         }
+        
+        $this->eventDispatcher->dispatch(new OrderStockDecreasedEvent($request->getId(), $records));
+        return true;
     }
 
-    public function confirmDecrease(OrderRequestInterface $request) : void
+    public function confirmDecrease(OrderRequestInterface $request) : bool
     {
-        try {
-            $this->manager->confirmDecrease();
-        } catch (OrderStockManagerExceptionInterface $exception) {
-            $this->logger->error("Warehouse decrease stock error", [
-                'exception' => $exception,
-            ]);
-        }
+        return $this->manager->confirmDecrease();
     }
 
     public function cancelDecrease(OrderRequestInterface $request) : void

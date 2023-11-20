@@ -7,6 +7,8 @@ use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 
 interface CreateOrderInterface
 {
-
+    /**
+     * @throws CreateOrderExceptionInterface
+     */
     public function create(OrderRequestInterface $request) : ?CreatedOrderInterface;
 }

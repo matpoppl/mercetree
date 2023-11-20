@@ -4,6 +4,8 @@ namespace Mateusz\Mercetree\Shop\OrderManager\Warehouse\Listener\ReadRepository;
 
 use Mateusz\Mercetree\Shop\OrderManager\Event\OrderRequestAcceptedEvent;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\OrderStockServiceInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\OrderStockManagerExceptionInterface;
+use Mateusz\Mercetree\Shop\OrderManager\Warehouse\OrderStockManagerException;
 
 class OrderRequestAcceptedListener
 {
@@ -14,6 +16,15 @@ class OrderRequestAcceptedListener
 
     public function __invoke(OrderRequestAcceptedEvent $event) : void
     {
-        $this->service->confirmDecrease($event->getOrderRequest());
+        try {
+            if ($this->service->confirmDecrease($event->getOrderRequest())) {
+                return;
+            }
+        } catch (OrderStockManagerExceptionInterface $exception) {
+            $event->stopPropagation($exception);
+            return;
+        }
+        
+        $event->stopPropagation(new OrderStockManagerException('Unknown OrderStockService confirm decrease error'));
     }
 }

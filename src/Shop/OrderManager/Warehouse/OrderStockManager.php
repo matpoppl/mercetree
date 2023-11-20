@@ -54,10 +54,10 @@ class OrderStockManager implements OrderStockManagerInterface
     /**
      * @throws OrderStockManagerExceptionInterface
      */
-    public function confirmDecrease() : void
+    public function confirmDecrease() : bool
     {
         try {
-            $this->repository->transactionCommit();
+            return $this->repository->transactionCommit();
         } catch (RepositoryExceptionInterface $rollbackException) {
             throw new OrderStockManagerException("Repository rollback error", 0, $rollbackException);
         }

@@ -13,25 +13,23 @@ class CreateOrderService implements CreateOrderServiceInterface
     {
     }
 
-    public function createOrder(OrderRequestInterface $request) : void
+    public function createOrder(OrderRequestInterface $request) : bool
     {
+        if (! $this->manager->transactionBegin()) {
+            return false;
+        }
+        
         try {
-            if (! $this->manager->transactionBegin()) {
-                return;
-            }
             $order = $this->manager->createOrder($request);
             $items = $this->manager->createOrderItems($order, $request);
             $createdOrder = new CreatedOrder($order, $items);
         } catch (CreateOrderExceptionInterface $exception) {
-            $createdOrder = false;
-            $this->logger->critical("CreateOrderManager create order error", [
-                'exception' => $exception,
-            ]);
+            $createdOrder = null;
         }
-
+        
         if ($createdOrder) {
             $this->eventDispatcher->dispatch(new CreatedOrderEvent($request->getId(), $createdOrder));
-            return;
+            return true;
         }
 
         try {
@@ -41,21 +39,17 @@ class CreateOrderService implements CreateOrderServiceInterface
                 'exception' => $exception,
             ]);
         }
+        
+        return false;
     }
 
-    public function confirmOrder(OrderRequestInterface $request): void
+    public function confirmOrder(OrderRequestInterface $request): bool
     {
-        try {
-            if ($this->manager->transactionCommit()) {
-                return;
-            }
-            $exception = new CreateOrderException('Manager transaction commit error');
-        } catch (CreateOrderExceptionInterface $exception) {
+        if ($this->manager->transactionCommit()) {
+            return true;
         }
-
-        $this->logger->critical("Manager transaction commit error", [
-            'exception' => $exception,
-        ]);
+        
+        throw new CreateOrderException('Manager transaction commit error');
     }
 
     public function cancelOrder(OrderRequestInterface $request): void

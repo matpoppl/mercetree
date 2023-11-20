@@ -10,6 +10,7 @@ use Mateusz\Mercetree\Shop\OrderManager\Event\OrderRequestCreatedEvent;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\OrderRequestInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Order\Request\RequestStatusManagerInterface;
 use Mateusz\Mercetree\Shop\OrderManager\Warehouse\Event\OrderStockRestoreEvent;
+use Mateusz\Mercetree\Event\StoppableEventInterface;
 
 class CreateOrder implements CreateOrderInterface
 {
@@ -19,25 +20,60 @@ class CreateOrder implements CreateOrderInterface
 
     public function create(OrderRequestInterface $request): ?CreatedOrderInterface
     {
-        $this->requestStatusManager->createRequestStatus($request->getId());
+        $status = $this->requestStatusManager->createRequestStatus($request->getId());
 
-        $this->eventManager->dispatch(new OrderRequestCreatedEvent($request));
-
-        $status = $this->requestStatusManager->getOrderRequestStatus($request->getId());
-
-        if ($status->isCompleted()) {
-            $this->eventManager->dispatch(new OrderRequestAcceptedEvent($request));
-            return $status->getCreatedOrder();
+        try {
+            $this->_dispatch(new OrderRequestCreatedEvent($request), "OrderRequestCreatedEvent error");
+        } catch (CreateOrderExceptionInterface $ex) {
+            $this->rollback($request);
+            throw $ex;
         }
-
+        
+        if (! $status->isCompleted()) {
+            // if (isSynchronous) $this->rollback($request);
+            return null;
+        }
+        
+        try {
+            $this->_dispatch(new OrderRequestAcceptedEvent($request), "OrderRequestAcceptedEvent error");
+        } catch (CreateOrderExceptionInterface $ex) {
+            $this->rollback($request);
+            throw $ex;
+        }
+        
+        return $status->getCreatedOrder();
+    }
+    
+    private function rollback(OrderRequestInterface $request)
+    {
+        $status = $this->requestStatusManager->getOrderRequestStatus($request->getId());
+        
         if ($status->getCreatedOrder()) {
             $this->eventManager->dispatch(new OrderRequestCancelledEvent($request));
         }
-
+        
         if ($decreased = $status->getDecreasedItems()) {
             $this->eventManager->dispatch(new OrderStockRestoreEvent($request->getId(), $decreased));
         }
-
-        return null;
+    }
+    
+    /**
+     * @throws CreateOrderExceptionInterface
+     */
+    private function _dispatch(StoppableEventInterface $event, string $exceptionMessage)
+    {
+        $this->eventManager->dispatch($event);
+        
+        if (! $event->isPropagationStopped()) {
+            return;
+        }
+        
+        $reason = $event->getStopReason();
+        
+        if (! $reason) {
+            return;
+        }
+        
+        throw new CreateOrderException($exceptionMessage, 0, $reason);
     }
 }

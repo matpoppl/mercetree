@@ -6,9 +6,9 @@ class RequestStatusManager implements RequestStatusManagerInterface
 {
     private array $statuses = [];
 
-    public function createRequestStatus(string $requestId) : void
+    public function createRequestStatus(string $requestId) : RequestStatusInterface
     {
-        $this->statuses[$requestId] = new RequestStatus();
+        return $this->statuses[$requestId] = new RequestStatus();
     }
 
     public function getOrderRequestStatus(string $requestId) : ?RequestStatusInterface

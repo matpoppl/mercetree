@@ -12,7 +12,7 @@ interface OrderStockManagerInterface
     /**
      * @throws OrderStockManagerExceptionInterface
      */
-    public function confirmDecrease() : void;
+    public function confirmDecrease() : bool;
 
     /**
      * @throws OrderStockManagerExceptionInterface
